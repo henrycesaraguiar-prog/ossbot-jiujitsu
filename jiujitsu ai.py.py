@@ -31,7 +31,6 @@ def gerar_audio(texto):
 PASTA_DADOS = os.path.dirname(os.path.abspath(__file__))
 
 def obter_caminho_usuario(nome_usuario):
-    # Transforma o nome em um formato seguro para nome de arquivo (ex: "Henry Cesar" -> "henry_cesar.json")
     nome_limpo = "".join(c if c.isalnum() else "_" for c in nome_usuario.lower()).strip("_")
     return os.path.join(PASTA_DADOS, f"usuario_{nome_limpo}.json")
 
@@ -260,7 +259,6 @@ with st.sidebar:
         st.warning("⚠️ Por favor, digite seu nome e sobrenome para começar a usar e salvar seu histórico.")
         st.stop()
 
-    # Se o usuário mudou ou acabou de entrar
     if "usuario_atual" not in st.session_state or st.session_state.usuario_atual != usuario_input:
         st.session_state.usuario_atual = usuario_input
         st.session_state.conversas = carregar_conversas_usuario(usuario_input)
@@ -268,7 +266,6 @@ with st.sidebar:
             iniciar_nova_conversa()
             salvar_conversa_atual()
         else:
-            # Abre a conversa mais recente
             ultimo_id = max(st.session_state.conversas, key=lambda c: st.session_state.conversas[c].get("atualizada", ""))
             abrir_conversa(ultimo_id)
 
@@ -355,13 +352,6 @@ try:
 except Exception as e:
     st.error(f"Erro ao inicializar o cliente Groq: {e}")
 
-system_prompt = (
-    "Você é o OssBot, um assistente especialista em Jiu-Jitsu brasileiro (BJJ), com foco especial em "
-    "auxiliar professores e monitores nas turmas kids (infantis), dinâmicas de treino, didática para crianças, "
-    "técnicas de solo e de pé, além de estratégias para campeonatos. Use termos corretos do jiu-jitsu (como OSS, guarda, "
-    "raspagem, finalização, professor, faixa) e mantenha sempre um tom motivador, seguro e profissional."
-)
-
 MODELO = "openai/gpt-oss-120b"
 
 def gerar_titulo(pergunta, resposta):
@@ -394,12 +384,39 @@ def gerar_titulo(pergunta, resposta):
     except Exception:
         return fallback
 
+# ---------------------------------------------------------------------------
+# Seleção de Modo (Professor/Kids ou Aluno/Competidor)
+# ---------------------------------------------------------------------------
+st.markdown("### ⚙️ Escolha o Modo de Atendimento")
+modo_selecionado = st.radio(
+    "Como você quer que o OssBot responda a sua próxima pergunta?",
+    ["🥋 Aluno / Competidor (Foco em treino, técnica e campeonatos)", 
+     "👶 Professor / Turma Kids (Foco em didática infantil, aulas e dinâmicas)"],
+    index=0,
+    key="modo_atendimento"
+)
+
+if "Aluno / Competidor" in modo_selecionado:
+    system_prompt = (
+        "Você é o OssBot, um assistente especialista em Jiu-Jitsu brasileiro (BJJ) focado em atletas e alunos praticantes. "
+        "Ajude o usuário com detalhes técnicos avançados, ajustes de posições, estratégias de luta, preparação física e mental "
+        "para campeonatos. Use termos corretos do jiu-jitsu (OSS, guarda, raspagem, finalização, faixa) e mantenha um tom motivador e técnico."
+    )
+else:
+    system_prompt = (
+        "Você é o OssBot, um assistente especialista em Jiu-Jitsu brasileiro (BJJ) focado em auxiliar professores, monitores "
+        "e auxiliares nas turmas kids (infantis). Ajude com dinâmicas de treino, didática divertida para crianças, segurança no tatame "
+        "e progressões pedagógicas lúdicas. Use termos corretos do jiu-jitsu (OSS, professor, faixa) e mantenha um tom motivador e seguro."
+    )
+
+st.divider()
+
 st.markdown("### 📥 Envio de Mídia e Captura")
 col_midia1, col_midia2 = st.columns(2)
 imagem_enviada = None
 
 with col_midia1:
-    tipo_envio = st.radio("Como quer enviar a imagem?", ["Arquivo/Galeria", "Tirar Foto com Câmera"])
+    tipo_envio = st.radio("Como quer enviar a imagem?", ["Arquivo/Galeria", "Tirar Foto com Câmera"], key="tipo_envio_img")
     if tipo_envio == "Arquivo/Galeria":
         imagem_enviada = st.file_uploader("Escolha uma imagem de posição ou técnica:", type=["jpg", "jpeg", "png"])
     else:
@@ -487,7 +504,7 @@ if texto_para_enviar:
         st.error("Erro na chave de API da Groq.")
     else:
         with st.chat_message("assistant"):
-            with st.spinner("O OssBot está preparando a resposta... OSS! 🥋"):
+            with st.spinner(f"O OssBot está preparando a resposta ({'Competidor' if 'Aluno' in modo_selecionado else 'Kids'})... OSS! 🥋"):
                 try:
                     mensagens_chat = [{"role": "system", "content": system_prompt}]
                     for h in st.session_state.historico[-20:]:
