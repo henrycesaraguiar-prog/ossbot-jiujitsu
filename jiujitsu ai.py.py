@@ -25,14 +25,73 @@ def gerar_audio(texto):
     gTTS(text=limpo, lang="pt", slow=False).write_to_fp(buffer)
     return buffer.getvalue()
 
-SAUDACAO = (
-    "Olá, Henry! OSS! 🥋 Como posso te ajudar hoje? Posso criar um cronograma de aula, "
+# ---------------------------------------------------------------------------
+# Gerenciamento de histórico por Usuário (Nome e Sobrenome)
+# ---------------------------------------------------------------------------
+PASTA_DADOS = os.path.dirname(os.path.abspath(__file__))
+
+def obter_caminho_usuario(nome_usuario):
+    # Transforma o nome em um formato seguro para nome de arquivo (ex: "Henry Cesar" -> "henry_cesar.json")
+    nome_limpo = "".join(c if c.isalnum() else "_" for c in nome_usuario.lower()).strip("_")
+    return os.path.join(PASTA_DADOS, f"usuario_{nome_limpo}.json")
+
+def carregar_conversas_usuario(nome_usuario):
+    caminho = obter_caminho_usuario(nome_usuario)
+    try:
+        if os.path.exists(caminho):
+            with open(caminho, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+def salvar_conversas_usuario(nome_usuario, conversas):
+    caminho = obter_caminho_usuario(nome_usuario)
+    try:
+        tmp = caminho + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(conversas, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, caminho)
+    except Exception as e:
+        st.warning(f"Não consegui salvar o histórico: {e}")
+
+SAUDACAO_PADRAO = (
+    "Olá, OSS! 🥋 Como posso te ajudar hoje? Posso criar um cronograma de aula, "
     "montar uma dinâmica para a turma kids, tirar uma dúvida técnica ou preparar uma "
     "estratégia para campeonato."
 )
 
 def iniciar_nova_conversa():
-    st.session_state.historico = [{"role": "assistant", "content": SAUDACAO}]
+    st.session_state.historico = [{"role": "assistant", "content": SAUDACAO_PADRAO}]
+    st.session_state.conversa_id = uuid.uuid4().hex
+    st.session_state.titulo = ""
+    st.session_state.titulo_ia = False
+
+def salvar_conversa_atual():
+    if not any(m["role"] == "user" for m in st.session_state.historico):
+        return
+    st.session_state.conversas[st.session_state.conversa_id] = {
+        "titulo": st.session_state.titulo or "Nova conversa",
+        "titulo_ia": st.session_state.titulo_ia,
+        "atualizada": datetime.now().isoformat(timespec="seconds"),
+        "mensagens": st.session_state.historico,
+    }
+    salvar_conversas_usuario(st.session_state.usuario_atual, st.session_state.conversas)
+
+def abrir_conversa(cid):
+    conv = st.session_state.conversas.get(cid)
+    if conv:
+        st.session_state.historico = conv["mensagens"]
+        st.session_state.conversa_id = cid
+        st.session_state.titulo = conv["titulo"]
+        st.session_state.titulo_ia = conv.get("titulo_ia", True)
+
+def apagar_conversa(cid):
+    if cid in st.session_state.conversas:
+        del st.session_state.conversas[cid]
+        salvar_conversas_usuario(st.session_state.usuario_atual, st.session_state.conversas)
+    if cid == st.session_state.conversa_id:
+        iniciar_nova_conversa()
 
 # Configuração da página do Streamlit
 st.set_page_config(
@@ -70,7 +129,6 @@ st.markdown("""
     div[data-testid="stAudioInput"] label, div[data-testid="stCameraInput"] label {
         color: #ff4d4d !important;
     }
-    
     div[data-testid="stChatInput"] {
         background-color: #f0f0f0 !important;
         border-radius: 10px;
@@ -186,9 +244,86 @@ doc.body.appendChild(caixa);
 </script>
 """, height=0)
 
-# Estado inicial da sessão individual
-if "historico" not in st.session_state:
-    iniciar_nova_conversa()
+# ---------------------------------------------------------------------------
+# Tela de Identificação / Login por Nome e Sobrenome na Barra Lateral
+# ---------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("## 🥋 Identificação")
+    usuario_input = st.text_input(
+        "Digite seu Nome e Sobrenome:",
+        value=st.session_state.get("usuario_atual", ""),
+        placeholder="Ex: Henry Cesar",
+        key="input_usuario"
+    ).strip()
+
+    if not usuario_input:
+        st.warning("⚠️ Por favor, digite seu nome e sobrenome para começar a usar e salvar seu histórico.")
+        st.stop()
+
+    # Se o usuário mudou ou acabou de entrar
+    if "usuario_atual" not in st.session_state or st.session_state.usuario_atual != usuario_input:
+        st.session_state.usuario_atual = usuario_input
+        st.session_state.conversas = carregar_conversas_usuario(usuario_input)
+        if not st.session_state.conversas:
+            iniciar_nova_conversa()
+            salvar_conversa_atual()
+        else:
+            # Abre a conversa mais recente
+            ultimo_id = max(st.session_state.conversas, key=lambda c: st.session_state.conversas[c].get("atualizada", ""))
+            abrir_conversa(ultimo_id)
+
+    st.divider()
+    st.markdown("## 🥋 Minhas conversas")
+    if st.button("➕ Nova conversa", on_click=iniciar_nova_conversa, key="btn_nova_conversa"):
+        salvar_conversa_atual()
+
+    busca = st.text_input(
+        "🔍 Pesquisar",
+        placeholder="Ex.: guarda",
+        key="busca_conversas",
+    ).strip().lower()
+
+    st.divider()
+
+    conversas = st.session_state.conversas
+    ids = sorted(conversas, key=lambda c: conversas[c].get("atualizada", ""), reverse=True)
+
+    mostradas = 0
+    for cid in ids:
+        conv = conversas[cid]
+        if busca:
+            texto_total = conv["titulo"].lower() + " " + " ".join(
+                m["content"].lower() for m in conv["mensagens"]
+            )
+            if busca not in texto_total:
+                continue
+
+        mostradas += 1
+        atual = cid == st.session_state.conversa_id
+        col_a, col_b = st.columns([5, 1])
+        with col_a:
+            st.button(
+                ("▶ " if atual else "") + conv["titulo"],
+                key=f"abrir_{cid}",
+                on_click=abrir_conversa,
+                args=(cid,),
+            )
+        with col_b:
+            st.button(
+                "🗑️",
+                key=f"apagar_{cid}",
+                on_click=apagar_conversa,
+                args=(cid,),
+                help="Apagar esta conversa",
+            )
+
+    if mostradas == 0:
+        if busca:
+            st.caption("Nenhuma conversa encontrada para essa pesquisa.")
+        else:
+            st.caption("Suas conversas vão aparecer aqui. 🥋")
+
+# Inicialização de estados auxiliares
 if "audio_key" not in st.session_state:
     st.session_state.audio_key = 0
 if "ultimo_audio" not in st.session_state:
@@ -196,7 +331,7 @@ if "ultimo_audio" not in st.session_state:
 if "ultima_imagem" not in st.session_state:
     st.session_state.ultima_imagem = None
 
-# Layout em colunas
+# Layout em colunas do cabeçalho
 col_esq, col_centro, col_dir = st.columns([1.2, 2.6, 1.2])
 
 with col_esq:
@@ -204,8 +339,8 @@ with col_esq:
 
 with col_centro:
     st.markdown("<h1 style='text-align: center; color: #ff4d4d !important;'>🥋 OssBot</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style='text-align: center; color: #00ffcc;'>Usuário: {st.session_state.usuario_atual}</h4>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align: center; color: #aaaaaa;'>O seu Assistente de Jiu-Jitsu</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #ff4d4d !important;'>Focado em turmas kids, dinâmicas de treino, preparação e dúvidas técnicas avançadas.</p>", unsafe_allow_html=True)
 
 with col_dir:
     st.image("https://images.unsplash.com/photo-1555597673-b21d5c935865?q=80&w=600&auto=format&fit=crop", caption="Faixa Preta — Tradição", use_container_width=True)
@@ -228,6 +363,36 @@ system_prompt = (
 )
 
 MODELO = "openai/gpt-oss-120b"
+
+def gerar_titulo(pergunta, resposta):
+    fallback = (pergunta[:40] + "…") if len(pergunta) > 40 else pergunta
+    if not client:
+        return fallback
+    try:
+        r = client.chat.completions.create(
+            model=MODELO,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Crie um título curto para esta conversa de jiu-jitsu, em português, "
+                        "no formato 'Tema: resumo', com no máximo 6 palavras no total. "
+                        "O 'Tema' é a palavra-chave principal (ex.: Fuga, Raspagem, Kids, Campeonato). "
+                        "Responda SOMENTE com o título, sem aspas e sem ponto final."
+                    ),
+                },
+                {"role": "user", "content": f"Pergunta: {pergunta}\n\nResposta: {resposta[:500]}"},
+            ],
+            temperature=0.3,
+            max_tokens=300,
+        )
+        titulo = (r.choices[0].message.content or "").strip().split("\n")[0]
+        titulo = titulo.strip('"\'*# ').rstrip(".")
+        if not titulo:
+            return fallback
+        return titulo[:60]
+    except Exception:
+        return fallback
 
 st.markdown("### 📥 Envio de Mídia e Captura")
 col_midia1, col_midia2 = st.columns(2)
@@ -267,9 +432,16 @@ pergunta_texto = st.chat_input("Digite sua dúvida técnica, pedido de dinâmica
 audio_hash = hashlib.md5(audio_enviado.getvalue()).hexdigest() if audio_enviado is not None else None
 imagem_hash = hashlib.md5(imagem_enviada.getvalue()).hexdigest() if imagem_enviada is not None else None
 
+def registrar_pergunta(conteudo, texto_titulo):
+    st.session_state.historico.append({"role": "user", "content": conteudo})
+    if not st.session_state.titulo:
+        t = texto_titulo.strip().replace("\n", " ")
+        st.session_state.titulo = (t[:40] + "…") if len(t) > 40 else t
+    salvar_conversa_atual()
+
 if pergunta_texto:
     texto_para_enviar = pergunta_texto
-    st.session_state.historico.append({"role": "user", "content": pergunta_texto})
+    registrar_pergunta(pergunta_texto, pergunta_texto)
     with st.chat_message("user"):
         st.markdown(pergunta_texto)
 
@@ -292,7 +464,7 @@ elif audio_enviado is not None and audio_hash != st.session_state.ultimo_audio:
                     )
 
                 texto_para_enviar = str(transcription).strip()
-                st.session_state.historico.append({"role": "user", "content": f"🎙️ **Áudio transcrito:** {texto_para_enviar}"})
+                registrar_pergunta(f"🎙️ **Áudio transcrito:** {texto_para_enviar}", texto_para_enviar)
                 with st.chat_message("user"):
                     st.audio(audio_enviado)
                     st.markdown(f"🎙️ **Áudio transcrito:** {texto_para_enviar}")
@@ -306,7 +478,7 @@ elif audio_enviado is not None and audio_hash != st.session_state.ultimo_audio:
 elif imagem_enviada is not None and imagem_hash != st.session_state.ultima_imagem:
     st.session_state.ultima_imagem = imagem_hash
     texto_para_enviar = "Analise e me oriente com base na imagem que enviei."
-    st.session_state.historico.append({"role": "user", "content": "[Imagem enviada pelo usuário]"})
+    registrar_pergunta("[Imagem enviada pelo usuário]", "Imagem enviada")
     with st.chat_message("user"):
         st.image(imagem_enviada, caption="Imagem enviada", use_container_width=True)
 
@@ -332,6 +504,20 @@ if texto_para_enviar:
                     st.markdown(resposta_texto)
                     st.session_state.historico.append({"role": "assistant", "content": resposta_texto})
 
+                    if not st.session_state.titulo_ia:
+                        primeira_pergunta = next(
+                            (
+                                m["content"].replace("🎙️ **Áudio transcrito:** ", "")
+                                for m in st.session_state.historico
+                                if m["role"] == "user"
+                            ),
+                            "",
+                        )
+                        st.session_state.titulo = gerar_titulo(primeira_pergunta, resposta_texto)
+                        st.session_state.titulo_ia = True
+
+                    salvar_conversa_atual()
+
                     if st.button("🔊 Ouvir resposta", key=f"ouvir_{len(st.session_state.historico) - 1}"):
                         try:
                             st.audio(gerar_audio(resposta_texto), format="audio/mp3")
@@ -339,12 +525,3 @@ if texto_para_enviar:
                             st.error(f"Erro ao gerar o áudio: {e}")
                 except Exception as e:
                     st.error(f"Erro ao conectar com a Groq: {e}")
-
-# Menu lateral com botão para limpar a conversa atual
-with st.sidebar:
-    st.markdown("## 🥋 Opções")
-    if st.button("🔄 Nova Conversa (Limpar Chat)", key="btn_limpar_chat"):
-        iniciar_nova_conversa()
-        st.rerun()
-    st.divider()
-    st.caption("Cada pessoa que abre o link tem sua própria conversa privada e limpa. OSS! 🥋")
