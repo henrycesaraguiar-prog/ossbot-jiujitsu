@@ -9,7 +9,7 @@ from datetime import datetime
 import streamlit as st
 import streamlit.components.v1 as components
 from groq import Groq
-from gtts import gTTS
+from gTTS import gTTS
 
 # ---------------------------------------------------------------------------
 # Funções de áudio
@@ -91,6 +91,29 @@ def apagar_conversa(cid):
         salvar_conversas_usuario(st.session_state.usuario_atual, st.session_state.conversas)
     if cid == st.session_state.conversa_id:
         iniciar_nova_conversa()
+
+# Função para gerar Atalhos Inteligentes com base no histórico do usuário
+def gerar_atalhos_inteligentes(conversas):
+    palavras_chave = {}
+    termos_comuns = {"como", "para", "qual", "uma", "com", "que", "dos", "das", "por", "sobre", "mais", "isso", "ele", "ela"}
+    
+    for cid, conv in conversas.items():
+        for m in conv.get("mensagens", []):
+            if m["role"] == "user":
+                texto = m["content"].lower()
+                for palavra in texto.split():
+                    p_limpa = "".join(c for c in palavra if c.isalnum())
+                    if len(p_limpa) > 3 and p_limpa not in termos_comuns:
+                        palavras_chave[p_limpa] = palavras_chave.get(p_limpa, 0) + 1
+                        
+    # Ordena os termos mais frequentes
+    ordenados = sorted(palavras_chave.items(), key=lambda x: x[1], reverse=True)
+    top_temos = [item[0].capitalize() for item in ordenados[:4]]
+    
+    # Se não houver histórico suficiente, usa atalhos padrão de Jiu-Jitsu
+    if not top_temos:
+        return ["Guarda", "Raspagem", "Campeonato", "Kids"]
+    return top_temos
 
 # Configuração da página do Streamlit
 st.set_page_config(
@@ -232,7 +255,7 @@ function rolar(direcao) {
     }
   });
   doc.documentElement.scrollTop = (direcao === 'cima') ? 0 : doc.documentElement.scrollHeight;
-  doc.body.scrollTop = (direcao === 'cima') ? 0 : doc.body.scrollHeight;
+  doc.body.scrollTop = (direcao === 'cima') ? 0 : doc.body.scrollTop;
 }
 
 const caixa = doc.createElement('div');
@@ -340,6 +363,8 @@ if "ultimo_audio" not in st.session_state:
     st.session_state.ultimo_audio = None
 if "ultima_imagem" not in st.session_state:
     st.session_state.ultima_imagem = None
+if "atalho_clicado" not in st.session_state:
+    st.session_state.atalho_clicado = None
 
 # Inicialização do Modo Luta
 if "pts_a" not in st.session_state:
@@ -393,7 +418,7 @@ st.divider()
 aba_chat, aba_modo_luta = st.tabs(["💬 Chat com IA", "🤼 MODO LUTA (Placar, Tempo & Voz)"])
 
 # ===========================================================================
-# ABA 2: MODO LUTA (Cronômetro 1-10 min + Placar Manual + Áudio)
+# ABA 2: MODO LUTA
 # ===========================================================================
 with aba_modo_luta:
     st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR, CRONÔMETRO E VOZ DA LUTA</h2>", unsafe_allow_html=True)
@@ -416,7 +441,7 @@ with aba_modo_luta:
         minutos_opcao = st.selectbox(
             "Escolha o tempo do Rola (de 1 a 10 minutos):",
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            index=4, # Padrão em 5 minutos
+            index=4,
             key="select_tempo"
         )
         
@@ -448,7 +473,7 @@ with aba_modo_luta:
 
     st.divider()
 
-    # Marcador de Áudio para Pontuação (Opcional)
+    # Marcador de Áudio para Pontuação
     st.markdown("### 🎙️ Ajuda por Voz (Opcional)")
     st.info("💡 **Quer usar a voz?** Fale o golpe e o atleta: Exemplo: *'Queda do Atleta Azul'*, *'Passagem de guarda do Atleta 2'*, etc. Ou use os botões abaixo!")
     
@@ -511,7 +536,7 @@ with aba_modo_luta:
 
     st.divider()
 
-    # Placar Manual (Botões na mão para pontuar livremente)
+    # Placar Manual (Botões na mão)
     col_p1, col_p2 = st.columns(2)
     
     with col_p1:
@@ -560,7 +585,7 @@ with aba_modo_luta:
 
 
 # ===========================================================================
-# ABA 1: CHAT COM IA
+# ABA 1: CHAT COM IA + ATALHOS INTELIGENTES PERSONALIZADOS
 # ===========================================================================
 with aba_chat:
     def gerar_titulo(pergunta, resposta):
@@ -618,6 +643,18 @@ with aba_chat:
 
     st.divider()
 
+    # Atalhos Inteligentes Baseados no Histórico do Usuário
+    st.markdown("### ⚡ Atalhos Inteligentes (Baseados no seu Histórico)")
+    atalhos_personalizados = gerar_atalhos_inteligentes(st.session_state.conversas)
+    
+    cols_atalhos = st.columns(len(atalhos_personalizados))
+    for idx, atalho in enumerate(atalhos_personalizados):
+        with cols_atalhos[idx]:
+            if st.button(f"📌 {atalho}", key=f"atalho_{idx}", use_container_width=True):
+                st.session_state.atalho_clicado = f"Quero dicas, técnicas e orientações sobre: {atalho}"
+
+    st.divider()
+
     st.markdown("### 📥 Envio de Mídia e Captura")
     col_midia1, col_midia2 = st.columns(2)
     imagem_enviada = None
@@ -653,6 +690,11 @@ with aba_chat:
     texto_para_enviar = None
     pergunta_texto = st.chat_input("Digite sua dúvida técnica, pedido de dinâmica kids ou estratégia...")
 
+    # Se clicou em um atalho inteligente, define o texto para enviar
+    if st.session_state.atalho_clicado:
+        texto_para_enviar = st.session_state.atalho_clicado
+        st.session_state.atalho_clicado = None
+
     audio_hash = hashlib.md5(audio_enviado.getvalue()).hexdigest() if audio_enviado is not None else None
     imagem_hash = hashlib.md5(imagem_enviada.getvalue()).hexdigest() if imagem_enviada is not None else None
 
@@ -668,6 +710,11 @@ with aba_chat:
         registrar_pergunta(pergunta_texto, pergunta_texto)
         with st.chat_message("user"):
             st.markdown(pergunta_texto)
+
+    elif texto_para_enviar and not pergunta_texto and st.session_state.historico[-1]["content"] != texto_para_enviar:
+        registrar_pergunta(texto_para_enviar, texto_para_enviar)
+        with st.chat_message("user"):
+            st.markdown(texto_para_enviar)
 
     elif audio_enviado is not None and audio_hash != st.session_state.ultimo_audio:
         st.session_state.ultimo_audio = audio_hash
@@ -705,6 +752,9 @@ with aba_chat:
         registrar_pergunta("[Imagem enviada pelo usuário]", "Imagem enviada")
         with st.chat_message("user"):
             st.image(imagem_enviada, caption="Imagem enviada", use_container_width=True)
+
+    if texto_para_enviar and not any(m["content"] == texto_para_enviar for m in st.session_state.historico[-1:]):
+        pass # Já tratado acima
 
     if texto_para_enviar:
         if not client:
