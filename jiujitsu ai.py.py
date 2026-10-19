@@ -226,6 +226,13 @@ st.markdown("""
         padding: 20px;
         margin-bottom: 20px;
     }
+    .curso-box {
+        background-color: #0f172a;
+        border: 2px solid #38bdf8;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -429,12 +436,13 @@ with col_dir:
 st.divider()
 
 # Abas Principais
-aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp = st.tabs([
+aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos = st.tabs([
     "💬 Chat com IA", 
     "🤼 MODO LUTA (Placar, Tempo & Voz)", 
     "📜 Histórico de Lutas",
     "🥗 Nutrição, Peso & Descanso",
-    "🏆 Gerador de Estratégias & Campeonato"
+    "🏆 Gerador de Estratégias & Campeonato",
+    "📚 Cursos & Aprendizados"
 ])
 
 # ===========================================================================
@@ -953,7 +961,7 @@ with aba_nutricao:
                     st.error(f"Erro ao processar consulta nutricional: {e}")
 
 # ===========================================================================
-# ABA 5: GERADOR DE ESTRATÉGIAS & CAMPEONATO (NOVA)
+# ABA 5: GERADOR DE ESTRATÉGIAS & CAMPEONATO
 # ===========================================================================
 with aba_camp:
     st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>🏆 GERADOR DE ESTRATÉGIA, CRONOGRAMA & TÁTICA DE CAMPEONATO</h2>", unsafe_allow_html=True)
@@ -1049,3 +1057,88 @@ with aba_camp:
 
                 except Exception as e:
                     st.error(f"Erro ao gerar plano de campeonato: {e}")
+
+# ===========================================================================
+# ABA 6: CURSOS & APRENDIZADOS (NOVA E COMPLETA)
+# ===========================================================================
+with aba_cursos:
+    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 CURSOS & APRENDIZADOS DE JIU-JITSU</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Cole aqui o texto do seu curso de regras, módulo da faixa, apostila ou técnica difícil. O OssBot explica tudo simples e lê para você ouvir!</p>", unsafe_allow_html=True)
+    
+    st.divider()
+
+    st.markdown("### 📝 O que você quer aprender hoje?")
+    
+    tipo_curso = st.selectbox(
+        "Escolha o tipo de conteúdo do seu curso:",
+        ["📖 Curso de Regras & Arbitragem (CBJJ / IBJJF)",
+         "🥋 Módulo Técnico da Faixa (Passagens, Guardas, Finalizações)",
+         "👶 Curso para Professores & Monitores Infantil / Kids",
+         "📑 Texto Livre / Apostila / Qualquer outro Curso"],
+        key="tipo_curso_sel"
+    )
+
+    texto_curso = st.text_area(
+        "Cole aqui o trecho do curso ou digite a sua dúvida de estudo:",
+        placeholder="Exemplo: Cole o trecho da regra de chave de pé da CBJJ ou a explicação da passagem de guarda emborcando...",
+        height=180,
+        key="input_texto_curso"
+    )
+
+    if st.button("🧠 DESCOMPLICAR CURSO & GERAR AULA", use_container_width=True, key="btn_descomplicar"):
+        if not texto_curso:
+            st.warning("Por favor, cole ou digite o conteúdo do curso na caixa acima!")
+        elif not client:
+            st.error("Erro na chave de API da Groq.")
+        else:
+            with st.spinner("O OssBot Professor está estudando o conteúdo e preparando a sua aula simples... OSS! 📖"):
+                try:
+                    prompt_curso = f"""
+                    Você é o OssBot, um Mestre e Professor de Jiu-Jitsu com didática perfeita e extremamente fácil de entender.
+                    O usuário está fazendo o seguinte curso: '{tipo_curso}'.
+                    Ele colou o seguinte conteúdo ou dúvida de estudo:
+                    '{texto_curso}'
+
+                    Sua missão é explicar esse conteúdo de forma impecável, dividida exatamente nas seguintes seções:
+
+                    1. 💡 EXPLICAÇÃO DESCOMPLICADA (Em palavras simples, sem complicação):
+                       - Explique exatamente o que o texto quer dizer de forma rápida e direta.
+
+                    2. 🥋 EXEMPLO PRÁTICO NO TATAME:
+                       - Dê um exemplo prático de como isso acontece numa luta real ou num treino da academia.
+
+                    3. 🎯 RESUMO EM 3 PONTOS-CHAVE (Para memorizar fácil):
+                       - 3 tópicos curtos com o mais importante desse estudo.
+
+                    4. ❓ TESTE SEU CONHECIMENTO (Simulado Rápido):
+                       - 1 pergunta simples sobre esse trecho com a resposta oculta logo abaixo.
+                    """
+
+                    res_curso = client.chat.completions.create(
+                        model=MODELO,
+                        messages=[{"role": "user", "content": prompt_curso}],
+                        temperature=0.6
+                    )
+
+                    resposta_curso_texto = res_curso.choices[0].message.content
+                    
+                    st.markdown("""
+                    <div class='curso-box'>
+                        <h2 style='color: #38bdf8; text-align: center;'>🎓 AULA DESCOMPLICADA DO OSSBOT</h2>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    st.markdown(resposta_curso_texto)
+
+                    st.divider()
+                    st.markdown("### 🎧 Quer ouvir esta aula em vez de ler?")
+                    if st.button("🔊 OUVIR AULA COMPLETA EM ÁUDIO", use_container_width=True, key="btn_ouvir_aula"):
+                        with st.spinner("Gerando o áudio da sua aula... 🎧"):
+                            audio_aula_bytes = gerar_audio(resposta_curso_texto)
+                            if audio_aula_bytes:
+                                st.audio(audio_aula_bytes, format="audio/mp3")
+                            else:
+                                st.info("Áudio indisponível no momento.")
+
+                except Exception as e:
+                    st.error(f"Erro ao processar o conteúdo do curso: {e}")
