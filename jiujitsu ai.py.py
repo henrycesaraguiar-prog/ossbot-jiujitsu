@@ -358,6 +358,8 @@ if "pun_b" not in st.session_state:
 
 if "tempo_segundos" not in st.session_state:
     st.session_state.tempo_segundos = 300
+if "cronometro_rodando" not in st.session_state:
+    st.session_state.cronometro_rodando = False
 if "ultimo_audio_luta" not in st.session_state:
     st.session_state.ultimo_audio_luta = None
 
@@ -388,13 +390,13 @@ with col_dir:
 st.divider()
 
 # Abas Principais
-aba_chat, aba_modo_luta = st.tabs(["💬 Chat com IA", "🤼 MODO LUTA (Placar & Áudio de Pontos)"])
+aba_chat, aba_modo_luta = st.tabs(["💬 Chat com IA", "🤼 MODO LUTA (Placar, Tempo & Voz)"])
 
 # ===========================================================================
-# ABA 2: MODO LUTA (Placar + Áudio de Comando por Voz)
+# ABA 2: MODO LUTA (Cronômetro 1-10 min + Placar Manual + Áudio)
 # ===========================================================================
 with aba_modo_luta:
-    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR DE LUTA COM COMANDO POR VOZ</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR, CRONÔMETRO E VOZ DA LUTA</h2>", unsafe_allow_html=True)
     
     col_luta1, col_luta2 = st.columns(2)
     
@@ -405,9 +407,50 @@ with aba_modo_luta:
         
     st.divider()
     
-    # Marcador de Áudio para Pontuação
-    st.markdown("### 🎙️ Narre a Luta (Marque pontos por Voz!)")
-    st.info("💡 **Fale o golpe e o atleta:** Exemplo: *'Queda do Atleta Azul'*, *'Passagem de guarda do Atleta 2'*, *'Montada do Atleta Branco'*, *'Vantagem Atleta 1'* ou *'Punição Atleta 2'*.")
+    # Seção do Cronômetro e Seletor de Tempo (1 a 10 minutos)
+    col_tempo1, col_tempo2, col_tempo3 = st.columns([1, 2, 1])
+    
+    with col_tempo2:
+        st.markdown("<h3 style='text-align: center;'>⏱️ Tempo de Luta</h3>", unsafe_allow_html=True)
+        
+        minutos_opcao = st.selectbox(
+            "Escolha o tempo do Rola (de 1 a 10 minutos):",
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            index=4, # Padrão em 5 minutos
+            key="select_tempo"
+        )
+        
+        if not st.session_state.cronometro_rodando and st.session_state.tempo_segundos == 300 and minutos_opcao != 5:
+            st.session_state.tempo_segundos = minutos_opcao * 60
+
+        mins = st.session_state.tempo_segundos // 60
+        segs = st.session_state.tempo_segundos % 60
+        
+        st.markdown(f"<h1 style='text-align: center; font-size: 70px; color: #ff4d4d;'>{mins:02d}:{segs:02d}</h1>", unsafe_allow_html=True)
+        
+        btn_c1, btn_c2, btn_c3 = st.columns(3)
+        with btn_c1:
+            if st.button("▶️ INICIAR", use_container_width=True):
+                st.session_state.cronometro_rodando = True
+        with btn_c2:
+            if st.button("⏸️ PAUSAR", use_container_width=True):
+                st.session_state.cronometro_rodando = False
+        with btn_c3:
+            if st.button("🔄 ZERAR", use_container_width=True):
+                st.session_state.cronometro_rodando = False
+                st.session_state.tempo_segundos = minutos_opcao * 60
+                st.session_state.pts_a = 0
+                st.session_state.vant_a = 0
+                st.session_state.pun_a = 0
+                st.session_state.pts_b = 0
+                st.session_state.vant_b = 0
+                st.session_state.pun_b = 0
+
+    st.divider()
+
+    # Marcador de Áudio para Pontuação (Opcional)
+    st.markdown("### 🎙️ Ajuda por Voz (Opcional)")
+    st.info("💡 **Quer usar a voz?** Fale o golpe e o atleta: Exemplo: *'Queda do Atleta Azul'*, *'Passagem de guarda do Atleta 2'*, etc. Ou use os botões abaixo!")
     
     audio_luta = st.audio_input("Clique para gravar o comando de voz da luta:", key="audio_comando_luta")
     
@@ -433,8 +476,6 @@ with aba_modo_luta:
                     texto_voz = str(transcription).lower().strip()
                     st.success(f"🎙️ **Voz identificada:** '{texto_voz}'")
 
-                    # Lógica de Identificação de Pontos por Voz (CBJJ)
-                    # Identificação de qual atleta recebeu o ponto
                     atleta_alvo = "a" if ("azul" in texto_voz or "atleta 1" in texto_voz or "um" in texto_voz or nome_atleta_a.lower() in texto_voz) else "b"
                     
                     if "queda" in texto_voz or "raspagem" in texto_voz or "joelho" in texto_voz or "2 pontos" in texto_voz or "dois pontos" in texto_voz:
@@ -470,7 +511,7 @@ with aba_modo_luta:
 
     st.divider()
 
-    # Seção do Placar dos Lutadores
+    # Placar Manual (Botões na mão para pontuar livremente)
     col_p1, col_p2 = st.columns(2)
     
     with col_p1:
@@ -478,6 +519,7 @@ with aba_modo_luta:
                     f"<div class='placar-numero'>{st.session_state.pts_a} Pts</div>"
                     f"<p style='color: #00ffcc;'>Vantagens: {st.session_state.vant_a} | Punições: {st.session_state.pun_a}</p></div>", unsafe_allow_html=True)
         
+        st.markdown("#### Marcar na mão:")
         ba1, ba2, ba3, ba4 = st.columns(4)
         if ba1.button("+2 Pts", key="a_2"): st.session_state.pts_a += 2
         if ba2.button("+3 Pts", key="a_3"): st.session_state.pts_a += 3
@@ -493,6 +535,7 @@ with aba_modo_luta:
                     f"<div class='placar-numero'>{st.session_state.pts_b} Pts</div>"
                     f"<p style='color: #00ffcc;'>Vantagens: {st.session_state.vant_b} | Punições: {st.session_state.pun_b}</p></div>", unsafe_allow_html=True)
         
+        st.markdown("#### Marcar na mão:")
         bb1, bb2, bb3, bb4 = st.columns(4)
         if bb1.button("+2 Pts", key="b_2"): st.session_state.pts_b += 2
         if bb2.button("+3 Pts", key="b_3"): st.session_state.pts_b += 3
@@ -504,13 +547,15 @@ with aba_modo_luta:
         if bb6.button("➖ Desfazer Ponto", key="b_sub"): st.session_state.pts_b = max(0, st.session_state.pts_b - 1)
 
     st.divider()
-    if st.button("🔄 ZERAR PLACAR DA LUTA", use_container_width=True):
+    if st.button("🔄 ZERAR PLACAR DA LUTA COMPLETO", use_container_width=True):
         st.session_state.pts_a = 0
         st.session_state.vant_a = 0
         st.session_state.pun_a = 0
         st.session_state.pts_b = 0
         st.session_state.vant_b = 0
         st.session_state.pun_b = 0
+        st.session_state.tempo_segundos = minutos_opcao * 60
+        st.session_state.cronometro_rodando = False
         st.rerun()
 
 
