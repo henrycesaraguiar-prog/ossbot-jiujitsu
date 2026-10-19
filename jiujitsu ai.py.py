@@ -212,6 +212,13 @@ st.markdown("""
         font-weight: bold;
         color: #00ffcc;
     }
+    .nutri-box {
+        background-color: #1e293b;
+        border: 2px solid #00ffcc;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -415,7 +422,12 @@ with col_dir:
 st.divider()
 
 # Abas Principais
-aba_chat, aba_modo_luta, aba_historico_lutas = st.tabs(["💬 Chat com IA", "🤼 MODO LUTA (Placar, Tempo & Voz)", "📜 Histórico de Lutas"])
+aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao = st.tabs([
+    "💬 Chat com IA", 
+    "🤼 MODO LUTA (Placar, Tempo & Voz)", 
+    "📜 Histórico de Lutas",
+    "🥗 Nutrição, Peso & Descanso"
+])
 
 # ===========================================================================
 # ABA 1: CHAT COM IA
@@ -832,3 +844,107 @@ with aba_historico_lutas:
                     st.write(f"🔵 **{luta['atleta_a']}**: {luta['pts_a']} Pts | {luta['vant_a']} Vant | {luta['pun_a']} Pun")
                 with col_h2:
                     st.write(f"⚪ **{luta['atleta_b']}**: {luta['pts_b']} Pts | {luta['vant_b']} Vant | {luta['pun_b']} Pun")
+
+# ===========================================================================
+# ABA 4: NUTRIÇÃO, BATEÇÃO DE PESO & DESCANSO (NOVA E COMPLETA)
+# ===========================================================================
+with aba_nutricao:
+    st.markdown("<h2 style='text-align: center; color: #00ffcc;'>🥗 ASSISTENTE DE NUTRIÇÃO, PESO & DESCANSO</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Calcule sua hidratação ideal, planeje sua bateção de peso sem perder forças e tire dúvidas de nutrição para o Jiu-Jitsu.</p>", unsafe_allow_html=True)
+    
+    st.divider()
+
+    # Calculadora Rápida de Hidratação Diária e de Treino
+    st.markdown("### 💧 Calculadora de Hidratação para Atletas")
+    
+    col_nutri1, col_nutri2 = st.columns(2)
+    with col_nutri1:
+        peso_atleta = st.number_input("Seu peso atual (kg):", min_value=30.0, max_value=150.0, value=65.0, step=0.5, key="nutri_peso")
+    with col_nutri2:
+        horas_treino = st.slider("Horas de treino de Jiu-Jitsu por dia:", min_value=0.5, max_value=4.0, value=1.5, step=0.5, key="nutri_treino")
+
+    # Cálculo base: 35ml por kg + 500ml por hora de treino inteso
+    agua_base = (peso_atleta * 35) / 1000
+    agua_treino = horas_treino * 0.75
+    agua_total = agua_base + agua_treino
+
+    st.markdown(f"""
+    <div class='nutri-box'>
+        <h3 style='color: #00ffcc;'>🥤 Sua Recomendação Diária de Água:</h3>
+        <h2 style='color: #ffffff;'>{agua_total:.2f} Litros por dia</h2>
+        <p style='color: #cccccc !important;'>• <b>{agua_base:.2f}L</b> para funções vitais diárias.<br>
+        • <b>{agua_treino:.2f}L</b> adicionais para repor o suor do tatame durante os rolas.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.divider()
+
+    # Guias Práticos e Dicas Rápidas
+    st.markdown("### 📋 Guias Rápidos de Recuperação e Alimentação")
+    
+    sub_tab1, sub_tab2, sub_tab3 = st.tabs(["⚡ Pré & Pós Treino", "⚖️ Bateção de Peso Saudável", "😴 Sono e Descanso"])
+    
+    with sub_tab1:
+        st.markdown("""
+        * **🍌 Pré-Treino (1h a 1h30 antes):**
+          * Carboidratos de fácil digestão para dar energia sem pesar no estômago (Ex.: Banana com aveia e mel, bisnaguinha com geleia, ou um suco natural).
+          * Evite comidas muito gordurosas para não ter refluxo nos rolas.
+        * **🥩 Pós-Treino (até 45 min após o treino):**
+          * Proteína para reconstrução muscular + Carboidrato para repor o glicogênio. (Ex.: Ovos mexidos com frango, Whey Protein com fruta, ou prato tradicional com arroz, feijão e carne magra).
+        """)
+
+    with sub_tab2:
+        st.markdown("""
+        * **⚠️ Dicas para bater o peso com segurança sem perder força:**
+          1. **Não passe fome no dia do campeonato:** O foco principal deve ser manter o gasto calórico elevado e ajustar o sódio e a retenção nos dias anteriores.
+          2. **Kimono pesa!** Lembre-se de pesar seu kimono seco (costuma pesar entre 1.3kg a 1.8kg dependendo do trançado).
+          3. **Desidratação leve (Apenas sob orientação):** Se precisar perder poucas gramas nas últimas 24h, prefira roupas térmicas em treinos leves e evite sal nas refeições da véspera.
+        """)
+
+    with sub_tab3:
+        st.markdown("""
+        * **🛌 O Poder do Descanso para o Atleta de BJJ:**
+          * **7 a 9 horas de sono:** É durante o sono profundo que o hormônio do crescimento (GH) é liberado para reparar as microlesões dos rolas.
+          * **Higiene do Sono:** Desligue telas 30 minutos antes de dormir para acalmar o sistema nervoso pós-treino noturno.
+        """)
+
+    st.divider()
+
+    # Pergunta personalizada para a IA sobre Nutrição
+    st.markdown("### 🤖 Pergunte ao Nutri-OssBot")
+    pergunta_nutri = st.text_input("Digite sua dúvida sobre alimentação, suplementos, bater peso ou descanso:", placeholder="Ex: O que comer na manhã do campeonato de Jiu-Jitsu?")
+
+    if st.button("🥗 Pedir Orientação Nutricional", key="btn_perguntar_nutri"):
+        if not pergunta_nutri:
+            st.warning("Por favor, digite uma dúvida acima!")
+        elif not client:
+            st.error("Erro na chave da API Groq.")
+        else:
+            with st.spinner("O OssBot Nutri está preparando suas recomendações... OSS! 🥋"):
+                try:
+                    prompt_nutricao = (
+                        "Você é o OssBot no modo Nutricionista Esportivo focado em Jiu-Jitsu Brasileiro. "
+                        f"O atleta pesa {peso_atleta}kg e treina {horas_treino}h por dia. "
+                        "Responda à dúvida dele com conselhos práticos, seguros e fáceis de aplicar no dia a dia do tatame. "
+                        "Lembre de recomendar consultar um nutricionista profissional para dietas específicas. "
+                        f"Dúvida do atleta: {pergunta_nutri}"
+                    )
+                    
+                    res_nutri = client.chat.completions.create(
+                        model=MODELO,
+                        messages=[{"role": "user", "content": prompt_nutricao}],
+                        temperature=0.7
+                    )
+                    
+                    texto_resposta_nutri = res_nutri.choices[0].message.content
+                    st.markdown("---")
+                    st.markdown("#### 🥗 Resposta do OssBot Nutri:")
+                    st.write(texto_resposta_nutri)
+
+                    if st.button("🔊 Ouvir Recomendações Nutricionais", key="ouvir_nutri"):
+                        audio_nutri_bytes = gerar_audio(texto_resposta_nutri)
+                        if audio_nutri_bytes:
+                            st.audio(audio_nutri_bytes, format="audio/mp3")
+
+                except Exception as e:
+                    st.error(f"Erro ao processar consulta nutricional: {e}")
