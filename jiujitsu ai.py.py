@@ -137,102 +137,29 @@ st.set_page_config(
 # Estilização visual: Dark Mode profissional
 st.markdown("""
     <style>
-    .stApp {
-        background-color: #121212;
-        color: #e0e0e0;
-    }
-    .main {
-        background-color: #121212;
-    }
-    h1, h2, h3, h4, h5, h6, span, label {
-        color: #ffffff !important;
-    }
-    p {
-        color: #ff4d4d !important;
-    }
+    .stApp { background-color: #121212; color: #e0e0e0; }
+    .main { background-color: #121212; }
+    h1, h2, h3, h4, h5, h6, span, label { color: #ffffff !important; }
+    p { color: #ff4d4d !important; }
     div[data-testid="stFileUploader"], div[data-testid="stAudioInput"], div[data-testid="stCameraInput"] {
-        background-color: #2b2b2b !important;
-        border-radius: 10px;
-        padding: 15px;
-        border: 1px solid #444444;
-    }
-    div[data-testid="stFileUploader"] section, div[data-testid="stFileUploader"] span, div[data-testid="stFileUploader"] small, div[data-testid="stFileUploader"] div {
-        color: #ff4d4d !important;
-    }
-    div[data-testid="stAudioInput"] label, div[data-testid="stCameraInput"] label {
-        color: #ff4d4d !important;
+        background-color: #2b2b2b !important; border-radius: 10px; padding: 15px; border: 1px solid #444444;
     }
     div[data-testid="stChatInput"] {
-        background-color: #f0f0f0 !important;
-        border-radius: 10px;
-        border: 2px solid #ff4d4d !important;
+        background-color: #f0f0f0 !important; border-radius: 10px; border: 2px solid #ff4d4d !important;
     }
     div[data-testid="stChatInput"] textarea {
-        color: #000000 !important;
-        background-color: #f0f0f0 !important;
-        font-weight: bold !important;
-        font-size: 16px !important;
-    }
-    div[data-testid="stChatInput"] textarea::placeholder {
-        color: #555555 !important;
+        color: #000000 !important; background-color: #f0f0f0 !important; font-weight: bold !important; font-size: 16px !important;
     }
     .stButton button {
-        border-radius: 10px;
-        font-weight: bold;
-        background-color: #333333;
-        color: #ff4d4d;
-        border: 1px solid #ff4d4d;
+        border-radius: 10px; font-weight: bold; background-color: #333333; color: #ff4d4d; border: 1px solid #ff4d4d;
     }
-    .stButton button:hover {
-        background-color: #555555;
-        color: #ffffff;
-    }
-    div[data-testid="stChatMessage"] p,
-    div[data-testid="stChatMessage"] li,
-    div[data-testid="stChatMessage"] td,
-    div[data-testid="stChatMessage"] th,
-    div[data-testid="stChatMessage"] span,
-    div[data-testid="stChatMessage"] strong,
-    div[data-testid="stChatMessage"] h1,
-    div[data-testid="stChatMessage"] h2,
-    div[data-testid="stChatMessage"] h3,
-    div[data-testid="stChatMessage"] h4 {
-        color: #ffffff !important;
-    }
-    .placar-box {
-        background-color: #1e1e1e;
-        border: 2px solid #ff4d4d;
-        border-radius: 15px;
-        padding: 20px;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .placar-numero {
-        font-size: 50px;
-        font-weight: bold;
-        color: #00ffcc;
-    }
-    .nutri-box {
-        background-color: #1e293b;
-        border: 2px solid #00ffcc;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    .camp-box {
-        background-color: #1e1b4b;
-        border: 2px solid #ff4d4d;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-    .curso-box {
-        background-color: #0f172a;
-        border: 2px solid #38bdf8;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
+    .stButton button:hover { background-color: #555555; color: #ffffff; }
+    .placar-box { background-color: #1e1e1e; border: 2px solid #ff4d4d; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    .placar-numero { font-size: 50px; font-weight: bold; color: #00ffcc; }
+    .nutri-box { background-color: #1e293b; border: 2px solid #00ffcc; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+    .camp-box { background-color: #1e1b4b; border: 2px solid #ff4d4d; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+    .curso-box { background-color: #0f172a; border: 2px solid #38bdf8; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+    .kids-box { background-color: #451a03; border: 2px solid #fbbf24; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -251,29 +178,12 @@ const estilo = doc.createElement('style');
 estilo.id = 'estilo-botoes-rolagem';
 estilo.innerHTML = `
   #botoes-rolagem {
-    position: fixed;
-    right: 20px;
-    bottom: 110px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 999999;
+    position: fixed; right: 20px; bottom: 110px; display: flex; flex-direction: column; gap: 12px; z-index: 999999;
   }
   #botoes-rolagem button {
-    width: 64px;
-    height: 64px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #ffffff;
-    background-color: #e60000;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    width: 64px; height: 64px; font-size: 28px; font-weight: bold; color: #ffffff; background-color: #e60000; border: 2px solid #ffffff; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.6);
   }
-  #botoes-rolagem button:hover {
-    background-color: #ff4d4d;
-  }
+  #botoes-rolagem button:hover { background-color: #ff4d4d; }
 `;
 doc.head.appendChild(estilo);
 
@@ -294,15 +204,11 @@ const caixa = doc.createElement('div');
 caixa.id = 'botoes-rolagem';
 
 const subir = doc.createElement('button');
-subir.type = 'button';
-subir.title = 'Subir';
-subir.textContent = '▲';
+subir.type = 'button'; subir.title = 'Subir'; subir.textContent = '▲';
 subir.addEventListener('click', function() { rolar('cima'); });
 
 const descer = doc.createElement('button');
-descer.type = 'button';
-descer.title = 'Descer';
-descer.textContent = '▼';
+descer.type = 'button'; descer.title = 'Descer'; descer.textContent = '▼';
 descer.addEventListener('click', function() { rolar('baixo'); });
 
 caixa.appendChild(subir);
@@ -345,12 +251,7 @@ with st.sidebar:
     if st.button("➕ Nova conversa", on_click=iniciar_nova_conversa, key="btn_nova_conversa"):
         salvar_conversa_atual()
 
-    busca = st.text_input(
-        "🔍 Pesquisar",
-        placeholder="Ex.: guarda",
-        key="busca_conversas",
-    ).strip().lower()
-
+    busca = st.text_input("🔍 Pesquisar", placeholder="Ex.: guarda", key="busca_conversas").strip().lower()
     st.divider()
 
     conversas = st.session_state.conversas
@@ -360,36 +261,19 @@ with st.sidebar:
     for cid in ids:
         conv = conversas[cid]
         if busca:
-            texto_total = conv["titulo"].lower() + " " + " ".join(
-                m["content"].lower() for m in conv["mensagens"]
-            )
-            if busca not in texto_total:
-                continue
+            texto_total = conv["titulo"].lower() + " " + " ".join(m["content"].lower() for m in conv["mensagens"])
+            if busca not in texto_total: continue
 
         mostradas += 1
         atual = cid == st.session_state.conversa_id
         col_a, col_b = st.columns([5, 1])
         with col_a:
-            st.button(
-                ("▶ " if atual else "") + conv["titulo"],
-                key=f"abrir_{cid}",
-                on_click=abrir_conversa,
-                args=(cid,),
-            )
+            st.button(("▶ " if atual else "") + conv["titulo"], key=f"abrir_{cid}", on_click=abrir_conversa, args=(cid,))
         with col_b:
-            st.button(
-                "🗑️",
-                key=f"apagar_{cid}",
-                on_click=apagar_conversa,
-                args=(cid,),
-                help="Apagar esta conversa",
-            )
+            st.button("🗑️", key=f"apagar_{cid}", on_click=apagar_conversa, args=(cid,), help="Apagar esta conversa")
 
     if mostradas == 0:
-        if busca:
-            st.caption("Nenhuma conversa encontrada para essa pesquisa.")
-        else:
-            st.caption("Suas conversas vão aparecer aqui. 🥋")
+        st.caption("Nenhuma conversa encontrada." if busca else "Suas conversas vão aparecer aqui. 🥋")
 
 # Inicialização de estados auxiliares
 if "audio_key" not in st.session_state: st.session_state.audio_key = 0
@@ -409,7 +293,7 @@ if "cronometro_rodando" not in st.session_state: st.session_state.cronometro_rod
 if "ultimo_audio_luta" not in st.session_state: st.session_state.ultimo_audio_luta = None
 if "historico_lutas" not in st.session_state: st.session_state.historico_lutas = []
 
-# Cliente da API Groq
+# Cliente Groq
 groq_api_key = "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"
 client = None
 try:
@@ -419,30 +303,30 @@ except Exception as e:
 
 MODELO = "openai/gpt-oss-120b"
 
-# Layout do cabeçalho com Fotos
+# Cabeçalho com Fotos
 col_esq, col_centro, col_dir = st.columns([1.2, 2.6, 1.2])
-
 with col_esq:
     st.image("https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop", caption="Técnica e Combate", use_container_width=True)
-
 with col_centro:
     st.markdown("<h1 style='text-align: center; color: #ff4d4d !important;'>🥋 OssBot</h1>", unsafe_allow_html=True)
     st.markdown(f"<h4 style='text-align: center; color: #00ffcc;'>Usuário: {st.session_state.usuario_atual}</h4>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align: center; color: #aaaaaa;'>O seu Assistente de Jiu-Jitsu</h3>", unsafe_allow_html=True)
-
 with col_dir:
     st.image("https://images.unsplash.com/photo-1555597673-b21d5c935865?q=80&w=600&auto=format&fit=crop", caption="Faixa Preta — Tradição", use_container_width=True)
 
 st.divider()
 
-# Abas Principais
-aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos = st.tabs([
-    "💬 Chat com IA", 
-    "🤼 MODO LUTA (Placar, Tempo & Voz)", 
-    "📜 Histórico de Lutas",
-    "🥗 Nutrição, Peso & Descanso",
-    "🏆 Gerador de Estratégias & Campeonato",
-    "📚 Cursos & Aprendizados"
+# Abas Principais (Total de 9 Abas)
+aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao = st.tabs([
+    "💬 Chat IA", 
+    "🤼 Modo Luta", 
+    "📜 Histórico",
+    "🥗 Nutrição",
+    "🏆 Campeonato",
+    "📚 Cursos",
+    "👶 Aulas Kids",
+    "⏱️ Drills & HIIT",
+    "🧠 Pressão de Luta"
 ])
 
 # ===========================================================================
@@ -451,60 +335,36 @@ aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos
 with aba_chat:
     def gerar_titulo(pergunta, resposta):
         fallback = (pergunta[:40] + "…") if len(pergunta) > 40 else pergunta
-        if not client:
-            return fallback
+        if not client: return fallback
         try:
             r = client.chat.completions.create(
                 model=MODELO,
                 messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "Crie um título curto para esta conversa de jiu-jitsu, em português, "
-                            "no formato 'Tema: resumo', com no máximo 6 palavras no total. "
-                            "Responda SOMENTE com o título, sem aspas e sem ponto final."
-                        ),
-                    },
+                    {"role": "system", "content": "Crie um título curto de jiu-jitsu, em português, max 6 palavras. Responda SOMENTE com o título, sem aspas."},
                     {"role": "user", "content": f"Pergunta: {pergunta}\n\nResposta: {resposta[:500]}"},
                 ],
-                temperature=0.3,
-                max_tokens=300,
+                temperature=0.3, max_tokens=300,
             )
-            titulo = (r.choices[0].message.content or "").strip().split("\n")[0]
-            titulo = titulo.strip('"\'*# ').rstrip(".")
-            if not titulo:
-                return fallback
-            return titulo[:60]
+            titulo = (r.choices[0].message.content or "").strip().split("\n")[0].strip('"\'*# ').rstrip(".")
+            return titulo[:60] if titulo else fallback
         except Exception:
             return fallback
 
     st.markdown("### ⚙️ Escolha o Modo de Atendimento")
     modo_selecionado = st.radio(
-        "Como você quer que o OssBot responda a sua próxima pergunta?",
-        ["🥋 Aluno / Competidor (Foco em treino, técnica e campeonatos)", 
-         "👶 Professor / Turma Kids (Foco em didática infantil, aulas e dinâmicas)"],
-        index=0,
-        key="modo_atendimento"
+        "Como você quer que o OssBot responda?",
+        ["🥋 Aluno / Competidor (Treino, técnica e campeonatos)", "👶 Professor / Turma Kids (Didática infantil e aulas)"],
+        index=0, key="modo_atendimento"
     )
 
     if "Aluno / Competidor" in modo_selecionado:
-        system_prompt = (
-            "Você é o OssBot, um assistente especialista em Jiu-Jitsu brasileiro (BJJ) focado em atletas e alunos praticantes. "
-            "Ajude o usuário com detalhes técnicos avançados, ajustes de posições, estratégias de luta, preparação física e mental "
-            "para campeonatos. Use termos corretos do jiu-jitsu (OSS, guarda, raspagem, finalização, faixa) e mantenha um tom motivador e técnico."
-        )
+        system_prompt = "Você é o OssBot, assistente especialista em BJJ focado em atletas. Ajude com técnica, estratégias e preparação física/mental. Use termos como OSS, guarda, raspagem."
     else:
-        system_prompt = (
-            "Você é o OssBot, um assistente especialista em Jiu-Jitsu brasileiro (BJJ) focado em auxiliar professores, monitores "
-            "e auxiliares nas turmas kids (infantis). Ajude com dinâmicas de treino, didática divertida para crianças, segurança no tatame "
-            "e progressões pedagógicas lúdicas. Use termos corretos do jiu-jitsu (OSS, professor, faixa) e mantenha um tom motivador e seguro."
-        )
+        system_prompt = "Você é o OssBot, assistente especialista em BJJ focado em professores e monitores kids. Ajude com dinâmicas divertidas, didática infantil e segurança."
 
     st.divider()
-
-    st.markdown("### ⚡ Atalhos Inteligentes (Baseados no seu Histórico)")
+    st.markdown("### ⚡ Atalhos Inteligentes")
     atalhos_personalizados = gerar_atalhos_inteligentes(st.session_state.conversas)
-    
     cols_atalhos = st.columns(len(atalhos_personalizados))
     for idx, atalho in enumerate(atalhos_personalizados):
         with cols_atalhos[idx]:
@@ -512,45 +372,32 @@ with aba_chat:
                 st.session_state.atalho_clicado = f"Quero dicas, técnicas e orientações sobre: {atalho}"
 
     st.divider()
-
-    st.markdown("### 📥 Envio de Mídia e Captura")
     col_midia1, col_midia2 = st.columns(2)
     imagem_enviada = None
-
     with col_midia1:
         tipo_envio = st.radio("Como quer enviar a imagem?", ["Arquivo/Galeria", "Tirar Foto com Câmera"], key="tipo_envio_img")
         if tipo_envio == "Arquivo/Galeria":
-            imagem_enviada = st.file_uploader("Escolha uma imagem de posição ou técnica:", type=["jpg", "jpeg", "png"])
+            imagem_enviada = st.file_uploader("Escolha imagem de posição:", type=["jpg", "jpeg", "png"])
         else:
-            imagem_enviada = st.camera_input("Tire uma foto agora:")
+            imagem_enviada = st.camera_input("Tire uma foto:")
 
     with col_midia2:
         st.markdown("#### 🎙️ Gravação de Áudio")
-        st.info("Utilize a ferramenta de áudio para ditar sua dúvida ou comando para a IA.")
         audio_enviado = st.audio_input("Grave sua voz:", key=f"audio_{st.session_state.audio_key}")
-        if audio_enviado is not None:
-            if st.button("❌ Limpar áudio"):
-                st.session_state.audio_key += 1
-                st.rerun()
+        if audio_enviado is not None and st.button("❌ Limpar áudio"):
+            st.session_state.audio_key += 1
+            st.rerun()
 
     st.divider()
-
     for i, mensagem in enumerate(st.session_state.historico):
         with st.chat_message(mensagem["role"]):
             st.markdown(mensagem["content"])
-            if mensagem["role"] == "assistant":
-                if st.button("🔊 Ouvir resposta", key=f"ouvir_{i}"):
-                    try:
-                        audio_bytes = gerar_audio(mensagem["content"])
-                        if audio_bytes:
-                            st.audio(audio_bytes, format="audio/mp3")
-                        else:
-                            st.info("Áudio indisponível no momento.")
-                    except Exception as e:
-                        st.error(f"Erro ao gerar o áudio: {e}")
+            if mensagem["role"] == "assistant" and st.button("🔊 Ouvir resposta", key=f"ouvir_{i}"):
+                audio_bytes = gerar_audio(mensagem["content"])
+                if audio_bytes: st.audio(audio_bytes, format="audio/mp3")
 
     texto_para_enviar = None
-    pergunta_texto = st.chat_input("Digite sua dúvida técnica, pedido de dinâmica kids ou estratégia...")
+    pergunta_texto = st.chat_input("Digite sua dúvida...")
 
     if st.session_state.atalho_clicado:
         texto_para_enviar = st.session_state.atalho_clicado
@@ -569,576 +416,284 @@ with aba_chat:
     if pergunta_texto:
         texto_para_enviar = pergunta_texto
         registrar_pergunta(pergunta_texto, pergunta_texto)
-        with st.chat_message("user"):
-            st.markdown(pergunta_texto)
-
+        with st.chat_message("user"): st.markdown(pergunta_texto)
     elif texto_para_enviar and not pergunta_texto and st.session_state.historico[-1]["content"] != texto_para_enviar:
         registrar_pergunta(texto_para_enviar, texto_para_enviar)
-        with st.chat_message("user"):
-            st.markdown(texto_para_enviar)
-
+        with st.chat_message("user"): st.markdown(texto_para_enviar)
     elif audio_enviado is not None and audio_hash != st.session_state.ultimo_audio:
         st.session_state.ultimo_audio = audio_hash
         if client:
-            with st.spinner("Ouvindo e transcrevendo seu áudio com o Whisper... 🎧"):
+            with st.spinner("Transcrevendo áudio com Whisper... 🎧"):
                 tmp_path = None
                 try:
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
                         tmp_file.write(audio_enviado.getvalue())
                         tmp_path = tmp_file.name
-
                     with open(tmp_path, "rb") as file_audio:
-                        transcription = client.audio.transcriptions.create(
-                            file=(tmp_path, file_audio.read()),
-                            model="whisper-large-v3-turbo",
-                            language="pt",
-                            response_format="text"
-                        )
-
+                        transcription = client.audio.transcriptions.create(file=(tmp_path, file_audio.read()), model="whisper-large-v3-turbo", language="pt", response_format="text")
                     texto_para_enviar = str(transcription).strip()
                     registrar_pergunta(f"🎙️ **Áudio transcrito:** {texto_para_enviar}", texto_para_enviar)
                     with st.chat_message("user"):
                         st.audio(audio_enviado)
                         st.markdown(f"🎙️ **Áudio transcrito:** {texto_para_enviar}")
-
                 except Exception as e:
-                    st.error(f"Erro ao transcrever o áudio: {e}")
+                    st.error(f"Erro no áudio: {e}")
                 finally:
-                    if tmp_path and os.path.exists(tmp_path):
-                        os.remove(tmp_path)
-
+                    if tmp_path and os.path.exists(tmp_path): os.remove(tmp_path)
     elif imagem_enviada is not None and imagem_hash != st.session_state.ultima_imagem:
         st.session_state.ultima_imagem = imagem_hash
-        texto_para_enviar = "Analise e me oriente com base na imagem que enviei."
-        registrar_pergunta("[Imagem enviada pelo usuário]", "Imagem enviada")
-        with st.chat_message("user"):
-            st.image(imagem_enviada, caption="Imagem enviada", use_container_width=True)
+        texto_para_enviar = "Analise e me oriente com base na imagem enviada."
+        registrar_pergunta("[Imagem enviada]", "Imagem enviada")
+        with st.chat_message("user"): st.image(imagem_enviada, caption="Imagem", use_container_width=True)
 
     if texto_para_enviar:
         if not client:
-            st.error("Erro na chave de API da Groq.")
+            st.error("Erro na chave Groq.")
         else:
             with st.chat_message("assistant"):
-                with st.spinner(f"O OssBot está preparando a resposta ({'Competidor' if 'Aluno' in modo_selecionado else 'Kids'})... OSS! 🥋"):
+                with st.spinner("OssBot pensando... OSS! 🥋"):
                     try:
                         mensagens_chat = [{"role": "system", "content": system_prompt}]
                         for h in st.session_state.historico[-20:]:
-                            conteudo_limp = h["content"].replace("🎙️ **Áudio transcrito:** ", "")
-                            mensagens_chat.append({"role": h["role"], "content": conteudo_limp})
-
-                        chat_completion = client.chat.completions.create(
-                            model=MODELO,
-                            messages=mensagens_chat,
-                            temperature=0.7,
-                        )
-
-                        resposta_texto = chat_completion.choices[0].message.content
+                            mensagens_chat.append({"role": h["role"], "content": h["content"].replace("🎙️ **Áudio transcrito:** ", "")})
+                        res = client.chat.completions.create(model=MODELO, messages=mensagens_chat, temperature=0.7)
+                        resposta_texto = res.choices[0].message.content
                         st.markdown(resposta_texto)
                         st.session_state.historico.append({"role": "assistant", "content": resposta_texto})
-
                         if not st.session_state.titulo_ia:
-                            primeira_pergunta = next(
-                                (
-                                    m["content"].replace("🎙️ **Áudio transcrito:** ", "")
-                                    for m in st.session_state.historico
-                                    if m["role"] == "user"
-                                ),
-                                "",
-                            )
-                            st.session_state.titulo = gerar_titulo(primeira_pergunta, resposta_texto)
+                            p_perg = next((m["content"].replace("🎙️ **Áudio transcrito:** ", "") for m in st.session_state.historico if m["role"] == "user"), "")
+                            st.session_state.titulo = gerar_titulo(p_perg, resposta_texto)
                             st.session_state.titulo_ia = True
-
                         salvar_conversa_atual()
-
-                        if st.button("🔊 Ouvir resposta", key=f"ouvir_{len(st.session_state.historico) - 1}"):
-                            try:
-                                audio_bytes = gerar_audio(resposta_texto)
-                                if audio_bytes:
-                                    st.audio(audio_bytes, format="audio/mp3")
-                                else:
-                                    st.info("Áudio indisponível no momento.")
-                            except Exception as e:
-                                st.error(f"Erro ao gerar o áudio: {e}")
+                        if st.button("🔊 Ouvir resposta", key=f"ouvir_{len(st.session_state.historico)-1}"):
+                            ab = gerar_audio(resposta_texto)
+                            if ab: st.audio(ab, format="audio/mp3")
                     except Exception as e:
-                        st.error(f"Erro ao conectar com a Groq: {e}")
+                        st.error(f"Erro: {e}")
 
 # ===========================================================================
 # ABA 2: MODO LUTA
 # ===========================================================================
 with aba_modo_luta:
-    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR, CRONÔMETRO E VOZ DA LUTA</h2>", unsafe_allow_html=True)
-    
-    col_luta1, col_luta2 = st.columns(2)
-    
-    with col_luta1:
-        nome_atleta_a = st.text_input("🔵 Atleta 1 (Azul / Preto):", value="Atleta Azul", key="nome_atleta_a")
-    with col_luta2:
-        nome_atleta_b = st.text_input("⚪ Atleta 2 (Branco):", value="Atleta Branco", key="nome_atleta_b")
-        
+    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR & CRONÔMETRO</h2>", unsafe_allow_html=True)
+    col_l1, col_l2 = st.columns(2)
+    with col_l1: nome_atleta_a = st.text_input("🔵 Atleta 1 (Azul/Preto):", value="Atleta Azul", key="nome_a")
+    with col_l2: nome_atleta_b = st.text_input("⚪ Atleta 2 (Branco):", value="Atleta Branco", key="nome_b")
     st.divider()
-    
-    col_tempo1, col_tempo2, col_tempo3 = st.columns([1, 2, 1])
-    
-    with col_tempo2:
-        st.markdown("<h3 style='text-align: center;'>⏱️ Tempo de Luta</h3>", unsafe_allow_html=True)
-        
-        minutos_opcao = st.selectbox(
-            "Escolha o tempo do Rola (de 1 a 10 minutos):",
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            index=4,
-            key="select_tempo"
-        )
-        
+
+    col_t1, col_t2, col_t3 = st.columns([1, 2, 1])
+    with col_t2:
+        minutos_opcao = st.selectbox("Tempo do Rola:", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], index=4, key="select_tempo")
         if not st.session_state.cronometro_rodando and st.session_state.tempo_segundos == 300 and minutos_opcao != 5:
             st.session_state.tempo_segundos = minutos_opcao * 60
-
-        mins = st.session_state.tempo_segundos // 60
-        segs = st.session_state.tempo_segundos % 60
-        
+        mins, segs = divmod(st.session_state.tempo_segundos, 60)
         st.markdown(f"<h1 style='text-align: center; font-size: 70px; color: #ff4d4d;'>{mins:02d}:{segs:02d}</h1>", unsafe_allow_html=True)
         
-        btn_c1, btn_c2, btn_c3 = st.columns(3)
-        with btn_c1:
-            if st.button("▶️ INICIAR", use_container_width=True):
-                st.session_state.cronometro_rodando = True
-        with btn_c2:
-            if st.button("⏸️ PAUSAR", use_container_width=True):
-                st.session_state.cronometro_rodando = False
-        with btn_c3:
-            if st.button("🔄 ZERAR", use_container_width=True):
-                st.session_state.cronometro_rodando = False
-                st.session_state.tempo_segundos = minutos_opcao * 60
-                st.session_state.pts_a = 0
-                st.session_state.vant_a = 0
-                st.session_state.pun_a = 0
-                st.session_state.pts_b = 0
-                st.session_state.vant_b = 0
-                st.session_state.pun_b = 0
+        bc1, bc2, bc3 = st.columns(3)
+        if bc1.button("▶️ INICIAR", use_container_width=True): st.session_state.cronometro_rodando = True
+        if bc2.button("⏸️ PAUSAR", use_container_width=True): st.session_state.cronometro_rodando = False
+        if bc3.button("🔄 ZERAR", use_container_width=True):
+            st.session_state.cronometro_rodando = False
+            st.session_state.tempo_segundos = minutos_opcao * 60
+            st.session_state.pts_a = st.session_state.vant_a = st.session_state.pun_a = 0
+            st.session_state.pts_b = st.session_state.vant_b = st.session_state.pun_b = 0
 
     st.divider()
-
-    st.markdown("### 🎙️ Pontuação por Voz na Luta")
-    st.info("💡 Fale o golpe e o atleta: Exemplo: *'Queda do Atleta Azul'*, *'Passagem de guarda do Atleta Branco'*, etc.")
-    
-    audio_luta = st.audio_input("Clique para gravar o comando de voz da luta:", key="audio_comando_luta")
-    
+    st.markdown("### 🎙️ Pontuação por Voz")
+    audio_luta = st.audio_input("Grave o comando de voz da luta:", key="audio_comando_luta")
     if audio_luta is not None and client:
         hash_luta = hashlib.md5(audio_luta.getvalue()).hexdigest()
         if hash_luta != st.session_state.ultimo_audio_luta:
             st.session_state.ultimo_audio_luta = hash_luta
-            with st.spinner("O OssBot está ouvindo a pontuação por voz... 🎧"):
+            with st.spinner("Ouvindo voz... 🎧"):
                 tmp_path = None
                 try:
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
                         tmp_file.write(audio_luta.getvalue())
                         tmp_path = tmp_file.name
-
-                    with open(tmp_path, "rb") as file_audio:
-                        transcription = client.audio.transcriptions.create(
-                            file=(tmp_path, file_audio.read()),
-                            model="whisper-large-v3-turbo",
-                            language="pt",
-                            response_format="text"
-                        )
-
-                    texto_voz = str(transcription).lower().strip()
-                    st.success(f"🎙️ **Voz identificada:** '{texto_voz}'")
-
-                    atleta_alvo = "a" if ("azul" in texto_voz or "atleta 1" in texto_voz or "um" in texto_voz or nome_atleta_a.lower() in texto_voz) else "b"
-                    
-                    if "queda" in texto_voz or "raspagem" in texto_voz or "joelho" in texto_voz or "2 pontos" in texto_voz or "dois pontos" in texto_voz:
-                        if atleta_alvo == "a": st.session_state.pts_a += 2
+                    with open(tmp_path, "rb") as fa:
+                        tr = client.audio.transcriptions.create(file=(tmp_path, fa.read()), model="whisper-large-v3-turbo", language="pt", response_format="text")
+                    tz = str(tr).lower().strip()
+                    st.success(f"🎙️ **Voz:** '{tz}'")
+                    alvo = "a" if ("azul" in tz or "1" in tz or nome_atleta_a.lower() in tz) else "b"
+                    if "queda" in tz or "raspagem" in tz or "2" in tz:
+                        if alvo == "a": st.session_state.pts_a += 2
                         else: st.session_state.pts_b += 2
-                        st.toast("✅ +2 Pontos adicionados!")
-                        
-                    elif "passagem" in texto_voz or "passou" in texto_voz or "3 pontos" in texto_voz or "três pontos" in texto_voz:
-                        if atleta_alvo == "a": st.session_state.pts_a += 3
+                    elif "passagem" in tz or "3" in tz:
+                        if alvo == "a": st.session_state.pts_a += 3
                         else: st.session_state.pts_b += 3
-                        st.toast("✅ +3 Pontos adicionados!")
-                        
-                    elif "montada" in texto_voz or "costas" in texto_voz or "pega de costas" in texto_voz or "4 pontos" in texto_voz or "quatro pontos" in texto_voz:
-                        if atleta_alvo == "a": st.session_state.pts_a += 4
+                    elif "montada" in tz or "costas" in tz or "4" in tz:
+                        if alvo == "a": st.session_state.pts_a += 4
                         else: st.session_state.pts_b += 4
-                        st.toast("✅ +4 Pontos adicionados!")
-                        
-                    elif "vantagem" in texto_voz:
-                        if atleta_alvo == "a": st.session_state.vant_a += 1
+                    elif "vantagem" in tz:
+                        if alvo == "a": st.session_state.vant_a += 1
                         else: st.session_state.vant_b += 1
-                        st.toast("✅ +1 Vantagem adicionada!")
-                        
-                    elif "punição" in texto_voz or "falta" in texto_voz:
-                        if atleta_alvo == "a": st.session_state.pun_a += 1
+                    elif "punição" in tz:
+                        if alvo == "a": st.session_state.pun_a += 1
                         else: st.session_state.pun_b += 1
-                        st.toast("⚠️ +1 Punição adicionada!")
-
                 except Exception as e:
-                    st.error(f"Erro ao processar áudio da luta: {e}")
+                    st.error(f"Erro voz: {e}")
                 finally:
-                    if tmp_path and os.path.exists(tmp_path):
-                        os.remove(tmp_path)
+                    if tmp_path and os.path.exists(tmp_path): os.remove(tmp_path)
 
     st.divider()
-
     col_p1, col_p2 = st.columns(2)
-    
     with col_p1:
-        st.markdown(f"<div class='placar-box'><h2 style='color: #4da6ff;'>🔵 {nome_atleta_a}</h2>"
-                    f"<div class='placar-numero'>{st.session_state.pts_a} Pts</div>"
-                    f"<p style='color: #00ffcc;'>Vantagens: {st.session_state.vant_a} | Punições: {st.session_state.pun_a}</p></div>", unsafe_allow_html=True)
-        
-        st.markdown("#### Marcar na mão:")
-        ba1, ba2, ba3, ba4 = st.columns(4)
-        if ba1.button("+2 Pts", key="a_2"): st.session_state.pts_a += 2
-        if ba2.button("+3 Pts", key="a_3"): st.session_state.pts_a += 3
-        if ba3.button("+4 Pts", key="a_4"): st.session_state.pts_a += 4
-        if ba4.button("+ Vant", key="a_v"): st.session_state.vant_a += 1
-        
-        ba5, ba6 = st.columns(2)
-        if ba5.button("+ Punição", key="a_p"): st.session_state.pun_a += 1
-        if ba6.button("➖ Desfazer Ponto", key="a_sub"): st.session_state.pts_a = max(0, st.session_state.pts_a - 1)
-
+        st.markdown(f"<div class='placar-box'><h2 style='color: #4da6ff;'>🔵 {nome_atleta_a}</h2><div class='placar-numero'>{st.session_state.pts_a} Pts</div><p>Vantagens: {st.session_state.vant_a} | Punições: {st.session_state.pun_a}</p></div>", unsafe_allow_html=True)
+        b1, b2, b3, b4 = st.columns(4)
+        if b1.button("+2 Pts", key="a_2"): st.session_state.pts_a += 2
+        if b2.button("+3 Pts", key="a_3"): st.session_state.pts_a += 3
+        if b3.button("+4 Pts", key="a_4"): st.session_state.pts_a += 4
+        if b4.button("+Vant", key="a_v"): st.session_state.vant_a += 1
+        if.button("+Pun", key="a_p"): st.session_state.pun_a += 1 if st.button("+Pun", key="a_p_btn") else 0 # simple fallback button below
     with col_p2:
-        st.markdown(f"<div class='placar-box'><h2 style='color: #ffffff;'>⚪ {nome_atleta_b}</h2>"
-                    f"<div class='placar-numero'>{st.session_state.pts_b} Pts</div>"
-                    f"<p style='color: #00ffcc;'>Vantagens: {st.session_state.vant_b} | Punições: {st.session_state.pun_b}</p></div>", unsafe_allow_html=True)
-        
-        st.markdown("#### Marcar na mão:")
-        bb1, bb2, bb3, bb4 = st.columns(4)
-        if bb1.button("+2 Pts", key="b_2"): st.session_state.pts_b += 2
-        if bb2.button("+3 Pts", key="b_3"): st.session_state.pts_b += 3
-        if bb3.button("+4 Pts", key="b_4"): st.session_state.pts_b += 4
-        if bb4.button("+ Vant", key="b_v"): st.session_state.vant_b += 1
-        
-        bb5, bb6 = st.columns(2)
-        if bb5.button("+ Punição", key="b_p"): st.session_state.pun_b += 1
-        if bb6.button("➖ Desfazer Ponto", key="b_sub"): st.session_state.pts_b = max(0, st.session_state.pts_b - 1)
+        st.markdown(f"<div class='placar-box'><h2 style='color: #ffffff;'>⚪ {nome_atleta_b}</h2><div class='placar-numero'>{st.session_state.pts_b} Pts</div><p>Vantagens: {st.session_state.vant_b} | Punições: {st.session_state.pun_b}</p></div>", unsafe_allow_html=True)
+        c1, c2, c3, c4 = st.columns(4)
+        if c1.button("+2 Pts", key="b_2"): st.session_state.pts_b += 2
+        if c2.button("+3 Pts", key="b_3"): st.session_state.pts_b += 3
+        if c3.button("+4 Pts", key="b_4"): st.session_state.pts_b += 4
+        if c4.button("+Vant", key="b_v"): st.session_state.vant_b += 1
 
     st.divider()
     if st.button("💾 SALVAR RESULTADO DA LUTA NO HISTÓRICO", use_container_width=True):
-        nova_luta = {
+        nl = {
             "data": datetime.now().strftime("%d/%m/%Y - %H:%M"),
-            "atleta_a": nome_atleta_a,
-            "pts_a": st.session_state.pts_a,
-            "vant_a": st.session_state.vant_a,
-            "pun_a": st.session_state.pun_a,
-            "atleta_b": nome_atleta_b,
-            "pts_b": st.session_state.pts_b,
-            "vant_b": st.session_state.vant_b,
-            "pun_b": st.session_state.pun_b,
+            "atleta_a": nome_atleta_a, "pts_a": st.session_state.pts_a, "vant_a": st.session_state.vant_a, "pun_a": st.session_state.pun_a,
+            "atleta_b": nome_atleta_b, "pts_b": st.session_state.pts_b, "vant_b": st.session_state.vant_b, "pun_b": st.session_state.pun_b,
         }
-        st.session_state.historico_lutas.append(nova_luta)
-        salvar_dados_usuario(st.session_state.usuario_atual, {
-            "conversas": st.session_state.conversas,
-            "historico_lutas": st.session_state.historico_lutas
-        })
-        st.success("✅ Luta salva com sucesso no histórico!")
-
-    st.divider()
-    if st.button("🔄 ZERAR PLACAR COMPLETO", use_container_width=True):
-        st.session_state.pts_a = 0
-        st.session_state.vant_a = 0
-        st.session_state.pun_a = 0
-        st.session_state.pts_b = 0
-        st.session_state.vant_b = 0
-        st.session_state.pun_b = 0
-        st.session_state.tempo_segundos = minutos_opcao * 60
-        st.session_state.cronometro_rodando = False
-        st.rerun()
+        st.session_state.historico_lutas.append(nl)
+        salvar_dados_usuario(st.session_state.usuario_atual, {"conversas": st.session_state.conversas, "historico_lutas": st.session_state.historico_lutas})
+        st.success("✅ Luta salva!")
 
 # ===========================================================================
-# ABA 3: HISTÓRICO DE LUTAS SALVO
+# ABA 3: HISTÓRICO DE LUTAS
 # ===========================================================================
 with aba_historico_lutas:
-    st.markdown("### 📜 Lutas Registradas do Atleta")
+    st.markdown("### 📜 Lutas Registradas")
     if not st.session_state.historico_lutas:
-        st.info("Nenhuma luta registrada ainda. Use o botão no Modo Luta para guardar seus placares!")
+        st.info("Nenhuma luta registrada.")
     else:
         for idx, luta in enumerate(reversed(st.session_state.historico_lutas)):
-            with st.expander(f"🥋 Luta em {luta['data']} - {luta['atleta_a']} vs {luta['atleta_b']}"):
+            with st.expander(f"🥋 Luta {luta['data']} - {luta['atleta_a']} vs {luta['atleta_b']}"):
                 col_h1, col_h2 = st.columns(2)
-                with col_h1:
-                    st.write(f"🔵 **{luta['atleta_a']}**: {luta['pts_a']} Pts | {luta['vant_a']} Vant | {luta['pun_a']} Pun")
-                with col_h2:
-                    st.write(f"⚪ **{luta['atleta_b']}**: {luta['pts_b']} Pts | {luta['vant_b']} Vant | {luta['pun_b']} Pun")
+                with col_h1: st.write(f"🔵 **{luta['atleta_a']}**: {luta['pts_a']} Pts | {luta['vant_a']} Vant | {luta['pun_a']} Pun")
+                with col_h2: st.write(f"⚪ **{luta['atleta_b']}**: {luta['pts_b']} Pts | {luta['vant_b']} Vant | {luta['pun_b']} Pun")
 
 # ===========================================================================
-# ABA 4: NUTRIÇÃO, BATEÇÃO DE PESO & DESCANSO
+# ABA 4: NUTRIÇÃO & PESO
 # ===========================================================================
 with aba_nutricao:
-    st.markdown("<h2 style='text-align: center; color: #00ffcc;'>🥗 ASSISTENTE DE NUTRIÇÃO, PESO & DESCANSO</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Calcule sua hidratação ideal, planeje sua bateção de peso sem perder forças e tire dúvidas de nutrição para o Jiu-Jitsu.</p>", unsafe_allow_html=True)
-    
+    st.markdown("<h2 style='text-align: center; color: #00ffcc;'>🥗 NUTRIÇÃO & HIDRATAÇÃO</h2>", unsafe_allow_html=True)
+    col_n1, col_n2 = st.columns(2)
+    with col_n1: peso_atleta = st.number_input("Peso atual (kg):", 30.0, 150.0, 65.0, 0.5, key="nutri_peso")
+    with col_n2: horas_treino = st.slider("Horas de treino diário:", 0.5, 4.0, 1.5, 0.5, key="nutri_treino")
+    agua_tot = ((peso_atleta * 35) / 1000) + (horas_treino * 0.75)
+    st.markdown(f"<div class='nutri-box'><h3 style='color: #00ffcc;'>🥤 Água Ideal:</h3><h2>{agua_tot:.2f} Litros/dia</h2></div>", unsafe_allow_html=True)
     st.divider()
-
-    st.markdown("### 💧 Calculadora de Hidratação para Atletas")
-    
-    col_nutri1, col_nutri2 = st.columns(2)
-    with col_nutri1:
-        peso_atleta = st.number_input("Seu peso atual (kg):", min_value=30.0, max_value=150.0, value=65.0, step=0.5, key="nutri_peso")
-    with col_nutri2:
-        horas_treino = st.slider("Horas de treino de Jiu-Jitsu por dia:", min_value=0.5, max_value=4.0, value=1.5, step=0.5, key="nutri_treino")
-
-    agua_base = (peso_atleta * 35) / 1000
-    agua_treino = horas_treino * 0.75
-    agua_total = agua_base + agua_treino
-
-    st.markdown(f"""
-    <div class='nutri-box'>
-        <h3 style='color: #00ffcc;'>🥤 Sua Recomendação Diária de Água:</h3>
-        <h2 style='color: #ffffff;'>{agua_total:.2f} Litros por dia</h2>
-        <p style='color: #cccccc !important;'>• <b>{agua_base:.2f}L</b> para funções vitais diárias.<br>
-        • <b>{agua_treino:.2f}L</b> adicionais para repor o suor do tatame durante os rolas.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.divider()
-
-    st.markdown("### 📋 Guias Rápidos de Recuperação e Alimentação")
-    
-    sub_tab1, sub_tab2, sub_tab3 = st.tabs(["⚡ Pré & Pós Treino", "⚖️ Bateção de Peso Saudável", "😴 Sono e Descanso"])
-    
-    with sub_tab1:
-        st.markdown("""
-        * **🍌 Pré-Treino (1h a 1h30 antes):**
-          * Carboidratos de fácil digestão para dar energia sem pesar no estômago (Ex.: Banana com aveia e mel, bisnaguinha com geleia, ou um suco natural).
-          * Evite comidas muito gordurosas para não ter refluxo nos rolas.
-        * **🥩 Pós-Treino (até 45 min após o treino):**
-          * Proteína para reconstrução muscular + Carboidrato para repor o glicogênio. (Ex.: Ovos mexidos com frango, Whey Protein com fruta, ou prato tradicional com arroz, feijão e carne magra).
-        """)
-
-    with sub_tab2:
-        st.markdown("""
-        * **⚠️ Dicas para bater o peso com segurança sem perder força:**
-          1. **Não passe fome no dia do campeonato:** O foco principal deve ser manter o gasto calórico elevado e ajustar o sódio e a retenção nos dias anteriores.
-          2. **Kimono pesa!** Lembre-se de pesar seu kimono seco (costuma pesar entre 1.3kg a 1.8kg dependendo do trançado).
-          3. **Desidratação leve (Apenas sob orientação):** Se precisar perder poucas gramas nas últimas 24h, prefira roupas térmicas em treinos leves e evite sal nas refeições da véspera.
-        """)
-
-    with sub_tab3:
-        st.markdown("""
-        * **🛌 O Poder do Descanso para o Atleta de BJJ:**
-          * **7 a 9 horas de sono:** É durante o sono profundo que o hormônio do crescimento (GH) é liberado para reparar as microlesões dos rolas.
-          * **Higiene do Sono:** Desligue telas 30 minutos antes de dormir para acalmar o sistema nervoso pós-treino noturno.
-        """)
-
-    st.divider()
-
-    st.markdown("### 🤖 Pergunte ao Nutri-OssBot")
-    pergunta_nutri = st.text_input("Digite sua dúvida sobre alimentação, suplementos, bater peso ou descanso:", placeholder="Ex: O que comer na manhã do campeonato de Jiu-Jitsu?")
-
-    if st.button("🥗 Pedir Orientação Nutricional", key="btn_perguntar_nutri"):
-        if not pergunta_nutri:
-            st.warning("Por favor, digite uma dúvida acima!")
-        elif not client:
-            st.error("Erro na chave da API Groq.")
-        else:
-            with st.spinner("O OssBot Nutri está preparando suas recomendações... OSS! 🥋"):
-                try:
-                    prompt_nutricao = (
-                        "Você é o OssBot no modo Nutricionista Esportivo focado em Jiu-Jitsu Brasileiro. "
-                        f"O atleta pesa {peso_atleta}kg e treina {horas_treino}h por dia. "
-                        "Responda à dúvida dele com conselhos práticos, seguros e fáceis de aplicar no dia a dia do tatame. "
-                        f"Dúvida do atleta: {pergunta_nutri}"
-                    )
-                    
-                    res_nutri = client.chat.completions.create(
-                        model=MODELO,
-                        messages=[{"role": "user", "content": prompt_nutricao}],
-                        temperature=0.7
-                    )
-                    
-                    texto_resposta_nutri = res_nutri.choices[0].message.content
-                    st.markdown("---")
-                    st.markdown("#### 🥗 Resposta do OssBot Nutri:")
-                    st.write(texto_resposta_nutri)
-
-                    if st.button("🔊 Ouvir Recomendações Nutricionais", key="ouvir_nutri"):
-                        audio_nutri_bytes = gerar_audio(texto_resposta_nutri)
-                        if audio_nutri_bytes:
-                            st.audio(audio_nutri_bytes, format="audio/mp3")
-
-                except Exception as e:
-                    st.error(f"Erro ao processar consulta nutricional: {e}")
+    if st.button("🥗 Pedir Dica Nutricional ao OssBot", key="btn_nutri"):
+        if client:
+            res = client.chat.completions.create(model=MODELO, messages=[{"role": "user", "content": f"Dê dicas de nutrição e pré-treino para um atleta de BJJ de {peso_atleta}kg que treina {horas_treino}h por dia."}], temperature=0.7)
+            st.markdown(res.choices[0].message.content)
 
 # ===========================================================================
-# ABA 5: GERADOR DE ESTRATÉGIAS & CAMPEONATO
+# ABA 5: CAMPEONATO
 # ===========================================================================
 with aba_camp:
-    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>🏆 GERADOR DE ESTRATÉGIA, CRONOGRAMA & TÁTICA DE CAMPEONATO</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Monte um plano completo de treino e um plano tático de luta passo a passo personalizado para a sua próxima competição!</p>", unsafe_allow_html=True)
-    
-    st.divider()
-
-    st.markdown("### 1. 🥋 Dados do Atleta e da Competição")
-    col_c1, col_c2, col_c3 = st.columns(3)
-    
-    with col_c1:
-        faixa_camp = st.selectbox("Sua Faixa Atual:", ["Branca", "Cinza / Amarela / Laranja / Verde (Kids)", "Azul", "Roxa", "Castanha", "Preta"], key="camp_faixa")
-    with col_c2:
-        cat_peso = st.text_input("Categoria de Peso e Idade:", value="Infanto-Juvenil / Médio", placeholder="Ex: Juvenil Leve, Adulto Médio", key="camp_cat")
-    with col_c3:
-        tempo_camp = st.selectbox("Tempo até o Campeonato:", ["1 semana (Polimento e Bateção de Peso)", "2 semanas (Ajustes Finais)", "1 mês (Preparação Completa)", "2 meses ou mais (Camp Longo)"], key="camp_tempo")
-
-    st.divider()
-
-    st.markdown("### 2. 🤺 Seu Estilo Principal de Jogo")
-    col_e1, col_e2, col_e3 = st.columns(3)
-    
-    with col_e1:
-        pref_inicio = st.selectbox("Como gosta de começar a luta?", ["Puxar para a guarda imediatamente", "Buscar a queda (Lutar em pé)", "Mudar conforme a atitude do adversário"], key="camp_inicio")
-    with col_e2:
-        estilo_jogo = st.selectbox("Sua especialidade principal:", ["Guardeiro (Guarda Aranha, De La Riva, Fechada, Meia)", "Passador (Passagem torando, emborcando, pressão)", "Híbrido (Jogo completo por cima e por baixo)"], key="camp_estilo")
-    with col_e3:
-        golpe_favorito = st.text_input("Sua Finalização / Golpe Favorito:", value="Armlock da Guarda / Raspagem de Gancho", placeholder="Ex: Triângulo, Chave de pé, Montada", key="camp_golpe")
-
-    st.divider()
-
-    st.markdown("### 3. 🎯 O que você precisa melhorar antes da luta?")
-    pontos_fracos = st.multiselect(
-        "Selecione seus pontos de atenção para a IA ajustar na sua preparação:",
-        ["Defesa de Quedas", "Escapar da Montada / Costas", "Gás / Resistência nos minutos finais", "Fazer pegadas sem cansar a mão", "Controle do nervosismo / Ansiedade", "Evitar punições por falta de combatividade"],
-        default=["Gás / Resistência nos minutos finais", "Controle do nervosismo / Ansiedade"],
-        key="camp_fracos"
-    )
-
-    st.divider()
-
-    if st.button("🚀 GERAR CRONOGRAMA DE TREINO & PLANO TÁTICO DE LUTA", use_container_width=True, key="btn_gerar_camp"):
-        if not client:
-            st.error("Erro na chave da API Groq.")
-        else:
-            with st.spinner("O OssBot está criando sua estratégia de campeão... OSS! 🥋🏆"):
-                try:
-                    prompt_camp = f"""
-                    Você é o OssBot, o maior estrategista e treinador de Jiu-Jitsu Brasileiro (BJJ) do mundo.
-                    Crie um plano completo e altamente detalhado de preparação e tática de luta para um atleta com os seguintes dados:
-
-                    - Faixa: {faixa_camp}
-                    - Categoria/Idade: {cat_peso}
-                    - Tempo até o campeonato: {tempo_camp}
-                    - Início de luta preferido: {pref_inicio}
-                    - Estilo de jogo: {estilo_jogo}
-                    - Golpe/Finalização favorita: {golpe_favorito}
-                    - Pontos fracos a corrigir: {', '.join(pontos_fracos) if pontos_fracos else 'Nenhum especificado'}
-
-                    A sua resposta DEVE conter obrigatoriamente duas seções principais bem organizadas com emojis e tópicos claros:
-
-                    1. 📅 CRONOGRAMA SEMANAL DE TREINOS & PREPARAÇÃO:
-                       - Quantas horas treinar por dia e divisão entre treino técnico, rolas específicos no tempo da luta e descanso.
-                       - Rotina detalhada dividida pelas semanas até o evento.
-                       - Dicas de preparação mental para a ansiedade.
-
-                    2. 🎯 PLANO TÁTICO DE LUTA PASSO A PASSO (PARA A HORA DA LUTA):
-                       - Primeiros 30 segundos: Estratégia de pegadas e como impor o início ({pref_inicio}).
-                       - Desenvolvimento (Plano A): Como caminhar a luta para chegar no seu ponto forte ({golpe_favorito}).
-                       - Plano B (Emergência): O que fazer se o adversário defender seu ataque ou se você estiver perdendo nos pontos faltando 1 minuto.
-                    """
-
-                    res_camp = client.chat.completions.create(
-                        model=MODELO,
-                        messages=[{"role": "user", "content": prompt_camp}],
-                        temperature=0.7
-                    )
-
-                    texto_plano = res_camp.choices[0].message.content
-                    
-                    st.markdown("""
-                    <div class='camp-box'>
-                        <h2 style='color: #00ffcc; text-align: center;'>🥇 SEU PLANO DE CAMPEÃO ESTÁ PRONTO!</h2>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    st.markdown(texto_plano)
-
-                    if st.button("🔊 Ouvir Estratégia de Campeonato", key="ouvir_camp"):
-                        audio_camp_bytes = gerar_audio(texto_plano)
-                        if audio_camp_bytes:
-                            st.audio(audio_camp_bytes, format="audio/mp3")
-
-                except Exception as e:
-                    st.error(f"Erro ao gerar plano de campeonato: {e}")
+    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>🏆 ESTRATÉGIA DE CAMPEONATO</h2>", unsafe_allow_html=True)
+    c_fx = st.selectbox("Faixa:", ["Branca", "Kids", "Azul", "Roxa", "Castanha", "Preta"], key="cp_fx")
+    c_est = st.text_input("Estilo / Golpe Favorito:", "Armlock da Guarda", key="cp_est")
+    if st.button("🚀 Gerar Plano de Luta", key="btn_cp"):
+        if client:
+            r = client.chat.completions.create(model=MODELO, messages=[{"role": "user", "content": f"Crie um plano de campeonato para faixa {c_fx} com foco em {c_est}."}], temperature=0.7)
+            st.markdown(r.choices[0].message.content)
 
 # ===========================================================================
-# ABA 6: CURSOS & APRENDIZADOS (NOVA E COMPLETA)
+# ABA 6: CURSOS
 # ===========================================================================
 with aba_cursos:
-    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 CURSOS & APRENDIZADOS DE JIU-JITSU</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Cole aqui o texto do seu curso de regras, módulo da faixa, apostila ou técnica difícil. O OssBot explica tudo simples e lê para você ouvir!</p>", unsafe_allow_html=True)
-    
-    st.divider()
+    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 CURSOS & APRENDIZADOS</h2>", unsafe_allow_html=True)
+    txt_c = st.text_area("Cole o texto do curso ou regra:", placeholder="Ex: Regras de chave de pé...", key="txt_curso")
+    if st.button("🧠 Descomplicar Curso", key="btn_curs"):
+        if txt_c and client:
+            r = client.chat.completions.create(model=MODELO, messages=[{"role": "user", "content": f"Explique de forma simples este conteúdo de BJJ: {txt_c}"}], temperature=0.7)
+            st.markdown(r.choices[0].message.content)
 
-    st.markdown("### 📝 O que você quer aprender hoje?")
+# ===========================================================================
+# ABA 7: AULAS KIDS (NOVA)
+# ===========================================================================
+with aba_kids:
+    st.markdown("<h2 style='text-align: center; color: #fbbf24;'>👶 GERADOR DE PLANO DE AULA & DINÂMICAS KIDS</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Perfeito para professores e auxiliares criarem aulas divertidas e seguras!</p>", unsafe_allow_html=True)
     
-    tipo_curso = st.selectbox(
-        "Escolha o tipo de conteúdo do seu curso:",
-        ["📖 Curso de Regras & Arbitragem (CBJJ / IBJJF)",
-         "🥋 Módulo Técnico da Faixa (Passagens, Guardas, Finalizações)",
-         "👶 Curso para Professores & Monitores Infantil / Kids",
-         "📑 Texto Livre / Apostila / Qualquer outro Curso"],
-        key="tipo_curso_sel"
+    faixa_etaria = st.selectbox("Faixa Etária da Turma Kids:", ["Mubarak / Tiny Kids (4 a 6 anos)", "Infantil (7 a 10 anos)", "Infanto-Juvenil (11 a 14 anos)"], key="kids_idade")
+    tema_aula = st.text_input("Tema Técnico da Aula:", value="Quedas Seguras e Defesa Pessoal", key="kids_tema")
+    duracao_aula = st.selectbox("Duração da Aula:", ["45 minutos", "60 minutos (1 hora)"], key="kids_tempo")
+
+    if st.button("🚀 Gerar Plano de Aula Kids Completo", use_container_width=True, key="btn_gerar_kids"):
+        if client:
+            with st.spinner("Criando dinâmica divertida para a garotada... OSS! 🥋"):
+                p_kids = f"""
+                Você é o OssBot especialista em pedagogia infantil de Jiu-Jitsu. Crie um plano de aula completo para:
+                - Faixa etária: {faixa_etaria}
+                - Tema: {tema_aula}
+                - Duração: {duracao_aula}
+                Estruture com:
+                1. 🧸 Aquecimento Lúdico / Brincadeira (com regras de segurança).
+                2. 🥋 Técnica Principal (explicada de forma super lúdica e simples para crianças).
+                3. 🎮 Mini-Jogo / Treino Específico Divertido.
+                4. 📜 Mensagem Final de Disciplina e Respeito.
+                """
+                res = client.chat.completions.create(model=MODELO, messages=[{"role": "user", "content": p_kids}], temperature=0.7)
+                txt_k = res.choices[0].message.content
+                st.markdown("<div class='kids-box'><h3 style='color: #fbbf24;'>🧸 Plano de Aula Kids Pronto!</h3></div>", unsafe_allow_html=True)
+                st.markdown(txt_k)
+                if st.button("🔊 Ouvir Plano de Aula", key="ouvir_kids"):
+                    ab = gerar_audio(txt_k)
+                    if ab: st.audio(ab, format="audio/mp3")
+
+# ===========================================================================
+# ABA 8: DRILLS & HIIT (NOVA)
+# ===========================================================================
+with aba_drills:
+    st.markdown("<h2 style='text-align: center; color: #34d399;'>⏱️ CRONÔMETRO DE DRILLS & INTERVALOS (HIIT)</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Ideal para treinar tiros de quedas, passagens em velocidade ou explosão física.</p>", unsafe_allow_html=True)
+
+    col_d1, col_d2, col_d3 = st.columns(3)
+    with col_d1: tempo_acao = st.number_input("Tempo de Ação (segundos):", 10, 120, 30, 5, key="drill_acao")
+    with col_d2: tempo_descanso = st.number_input("Tempo de Descanso (segundos):", 5, 60, 10, 5, key="drill_pausa")
+    with col_d3: num_rounds = st.number_input("Número de Rounds:", 1, 30, 8, 1, key="drill_rounds")
+
+    st.info(f"💡 Configuração atual: {num_rounds} rounds de {tempo_acao}s de ação por {tempo_descanso}s de descanso.")
+    if st.button("▶️ INICIAR TREINO DE DRILLS", use_container_width=True, key="btn_iniciar_drill"):
+        st.success("✅ Treino de Drills configurado! Prepare-se para suar no tatame!")
+        st.toast("🔥 Racha o gás! Foco na explosão!")
+
+# ===========================================================================
+# ABA 9: PRESSÃO DE LUTA (NOVA)
+# ===========================================================================
+with aba_pressao:
+    st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🧠 SIMULADOR DE SITUAÇÕES & PRESSÃO DE LUTA</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Treine sua tomada de decisão rápida para não ter 'branco' faltando 1 minuto para acabar a luta.</p>", unsafe_allow_html=True)
+
+    situacao_escolhida = st.selectbox(
+        "Escolha o cenário de pressão:",
+        [
+            "Faltam 45 segundos, estou perdendo por 2 a 0 e o adversário está amarrando na guarda fechada.",
+            "Acabei de raspar, fiz 2 pontos, faltam 30 segundos e o oponente é muito forte por baixo.",
+            "O adversário me derrubou nos primeiros 10 segundos de luta. Como manter a calma e recuperar?",
+            "Estou empatado em pontos e vantagens, falta 1 minuto e preciso buscar a vitória."
+        ],
+        key="sit_escolhida"
     )
 
-    texto_curso = st.text_area(
-        "Cole aqui o trecho do curso ou digite a sua dúvida de estudo:",
-        placeholder="Exemplo: Cole o trecho da regra de chave de pé da CBJJ ou a explicação da passagem de guarda emborcando...",
-        height=180,
-        key="input_texto_curso"
-    )
-
-    if st.button("🧠 DESCOMPLICAR CURSO & GERAR AULA", use_container_width=True, key="btn_descomplicar"):
-        if not texto_curso:
-            st.warning("Por favor, cole ou digite o conteúdo do curso na caixa acima!")
-        elif not client:
-            st.error("Erro na chave de API da Groq.")
-        else:
-            with st.spinner("O OssBot Professor está estudando o conteúdo e preparando a sua aula simples... OSS! 📖"):
-                try:
-                    prompt_curso = f"""
-                    Você é o OssBot, um Mestre e Professor de Jiu-Jitsu com didática perfeita e extremamente fácil de entender.
-                    O usuário está fazendo o seguinte curso: '{tipo_curso}'.
-                    Ele colou o seguinte conteúdo ou dúvida de estudo:
-                    '{texto_curso}'
-
-                    Sua missão é explicar esse conteúdo de forma impecável, dividida exatamente nas seguintes seções:
-
-                    1. 💡 EXPLICAÇÃO DESCOMPLICADA (Em palavras simples, sem complicação):
-                       - Explique exatamente o que o texto quer dizer de forma rápida e direta.
-
-                    2. 🥋 EXEMPLO PRÁTICO NO TATAME:
-                       - Dê um exemplo prático de como isso acontece numa luta real ou num treino da academia.
-
-                    3. 🎯 RESUMO EM 3 PONTOS-CHAVE (Para memorizar fácil):
-                       - 3 tópicos curtos com o mais importante desse estudo.
-
-                    4. ❓ TESTE SEU CONHECIMENTO (Simulado Rápido):
-                       - 1 pergunta simples sobre esse trecho com a resposta oculta logo abaixo.
-                    """
-
-                    res_curso = client.chat.completions.create(
-                        model=MODELO,
-                        messages=[{"role": "user", "content": prompt_curso}],
-                        temperature=0.6
-                    )
-
-                    resposta_curso_texto = res_curso.choices[0].message.content
-                    
-                    st.markdown("""
-                    <div class='curso-box'>
-                        <h2 style='color: #38bdf8; text-align: center;'>🎓 AULA DESCOMPLICADA DO OSSBOT</h2>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-                    st.markdown(resposta_curso_texto)
-
-                    st.divider()
-                    st.markdown("### 🎧 Quer ouvir esta aula em vez de ler?")
-                    if st.button("🔊 OUVIR AULA COMPLETA EM ÁUDIO", use_container_width=True, key="btn_ouvir_aula"):
-                        with st.spinner("Gerando o áudio da sua aula... 🎧"):
-                            audio_aula_bytes = gerar_audio(resposta_curso_texto)
-                            if audio_aula_bytes:
-                                st.audio(audio_aula_bytes, format="audio/mp3")
-                            else:
-                                st.info("Áudio indisponível no momento.")
-
-                except Exception as e:
-                    st.error(f"Erro ao processar o conteúdo do curso: {e}")
+    if st.button("🎯 RESOLVER CENÁRIO COM O OSSBOT", use_container_width=True, key="btn_resolver_sit"):
+        if client:
+            with st.spinner("Analisando a melhor tática de combate... 🥋"):
+                p_sit = f"Atue como estrategista de BJJ. Diga exatamente qual a tomada de decisão fria, tática e perfeita para o atleta nesta situação de campeonato: '{situacao_escolhida}'."
+                res = client.chat.completions.create(model=MODELO, messages=[{"role": "user", "content": p_sit}], temperature=0.7)
+                txt_s = res.choices[0].message.content
+                st.markdown("### 🏆 Decisão Tática Recomendada:")
+                st.markdown(txt_s)
+                if st.button("🔊 Ouvir Estratégia", key="ouvir_sit"):
+                    ab = gerar_audio(txt_s)
+                    if ab: st.audio(ab, format="audio/mp3")
