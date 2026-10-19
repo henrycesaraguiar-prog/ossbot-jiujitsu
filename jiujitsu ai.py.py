@@ -540,19 +540,20 @@ with aba_modo_luta:
     col_p1, col_p2 = st.columns(2)
     with col_p1:
         st.markdown(f"<div class='placar-box'><h2 style='color: #4da6ff;'>🔵 {nome_atleta_a}</h2><div class='placar-numero'>{st.session_state.pts_a} Pts</div><p>Vantagens: {st.session_state.vant_a} | Punições: {st.session_state.pun_a}</p></div>", unsafe_allow_html=True)
-        b1, b2, b3, b4 = st.columns(4)
+        b1, b2, b3, b4, b5 = st.columns(5)
         if b1.button("+2 Pts", key="a_2"): st.session_state.pts_a += 2
         if b2.button("+3 Pts", key="a_3"): st.session_state.pts_a += 3
         if b3.button("+4 Pts", key="a_4"): st.session_state.pts_a += 4
         if b4.button("+Vant", key="a_v"): st.session_state.vant_a += 1
-        if.button("+Pun", key="a_p"): st.session_state.pun_a += 1 if st.button("+Pun", key="a_p_btn") else 0 # simple fallback button below
+        if b5.button("+Pun", key="a_p"): st.session_state.pun_a += 1
     with col_p2:
         st.markdown(f"<div class='placar-box'><h2 style='color: #ffffff;'>⚪ {nome_atleta_b}</h2><div class='placar-numero'>{st.session_state.pts_b} Pts</div><p>Vantagens: {st.session_state.vant_b} | Punições: {st.session_state.pun_b}</p></div>", unsafe_allow_html=True)
-        c1, c2, c3, c4 = st.columns(4)
+        c1, c2, c3, c4, c5 = st.columns(5)
         if c1.button("+2 Pts", key="b_2"): st.session_state.pts_b += 2
         if c2.button("+3 Pts", key="b_3"): st.session_state.pts_b += 3
         if c3.button("+4 Pts", key="b_4"): st.session_state.pts_b += 4
         if c4.button("+Vant", key="b_v"): st.session_state.vant_b += 1
+        if c5.button("+Pun", key="b_p"): st.session_state.pun_b += 1
 
     st.divider()
     if st.button("💾 SALVAR RESULTADO DA LUTA NO HISTÓRICO", use_container_width=True):
@@ -619,7 +620,7 @@ with aba_cursos:
             st.markdown(r.choices[0].message.content)
 
 # ===========================================================================
-# ABA 7: AULAS KIDS (NOVA)
+# ABA 7: AULAS KIDS
 # ===========================================================================
 with aba_kids:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>👶 GERADOR DE PLANO DE AULA & DINÂMICAS KIDS</h2>", unsafe_allow_html=True)
@@ -652,7 +653,7 @@ with aba_kids:
                     if ab: st.audio(ab, format="audio/mp3")
 
 # ===========================================================================
-# ABA 8: DRILLS & HIIT (NOVA)
+# ABA 8: DRILLS & HIIT
 # ===========================================================================
 with aba_drills:
     st.markdown("<h2 style='text-align: center; color: #34d399;'>⏱️ CRONÔMETRO DE DRILLS & INTERVALOS (HIIT)</h2>", unsafe_allow_html=True)
@@ -669,7 +670,7 @@ with aba_drills:
         st.toast("🔥 Racha o gás! Foco na explosão!")
 
 # ===========================================================================
-# ABA 9: PRESSÃO DE LUTA (NOVA)
+# ABA 9: PRESSÃO DE LUTA
 # ===========================================================================
 with aba_pressao:
     st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🧠 SIMULADOR DE SITUAÇÕES & PRESSÃO DE LUTA</h2>", unsafe_allow_html=True)
