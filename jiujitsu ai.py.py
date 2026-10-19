@@ -219,6 +219,13 @@ st.markdown("""
         padding: 20px;
         margin-bottom: 20px;
     }
+    .camp-box {
+        background-color: #1e1b4b;
+        border: 2px solid #ff4d4d;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -422,11 +429,12 @@ with col_dir:
 st.divider()
 
 # Abas Principais
-aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao = st.tabs([
+aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp = st.tabs([
     "💬 Chat com IA", 
     "🤼 MODO LUTA (Placar, Tempo & Voz)", 
     "📜 Histórico de Lutas",
-    "🥗 Nutrição, Peso & Descanso"
+    "🥗 Nutrição, Peso & Descanso",
+    "🏆 Gerador de Estratégias & Campeonato"
 ])
 
 # ===========================================================================
@@ -846,7 +854,7 @@ with aba_historico_lutas:
                     st.write(f"⚪ **{luta['atleta_b']}**: {luta['pts_b']} Pts | {luta['vant_b']} Vant | {luta['pun_b']} Pun")
 
 # ===========================================================================
-# ABA 4: NUTRIÇÃO, BATEÇÃO DE PESO & DESCANSO (NOVA E COMPLETA)
+# ABA 4: NUTRIÇÃO, BATEÇÃO DE PESO & DESCANSO
 # ===========================================================================
 with aba_nutricao:
     st.markdown("<h2 style='text-align: center; color: #00ffcc;'>🥗 ASSISTENTE DE NUTRIÇÃO, PESO & DESCANSO</h2>", unsafe_allow_html=True)
@@ -854,7 +862,6 @@ with aba_nutricao:
     
     st.divider()
 
-    # Calculadora Rápida de Hidratação Diária e de Treino
     st.markdown("### 💧 Calculadora de Hidratação para Atletas")
     
     col_nutri1, col_nutri2 = st.columns(2)
@@ -863,7 +870,6 @@ with aba_nutricao:
     with col_nutri2:
         horas_treino = st.slider("Horas de treino de Jiu-Jitsu por dia:", min_value=0.5, max_value=4.0, value=1.5, step=0.5, key="nutri_treino")
 
-    # Cálculo base: 35ml por kg + 500ml por hora de treino inteso
     agua_base = (peso_atleta * 35) / 1000
     agua_treino = horas_treino * 0.75
     agua_total = agua_base + agua_treino
@@ -879,7 +885,6 @@ with aba_nutricao:
 
     st.divider()
 
-    # Guias Práticos e Dicas Rápidas
     st.markdown("### 📋 Guias Rápidos de Recuperação e Alimentação")
     
     sub_tab1, sub_tab2, sub_tab3 = st.tabs(["⚡ Pré & Pós Treino", "⚖️ Bateção de Peso Saudável", "😴 Sono e Descanso"])
@@ -910,7 +915,6 @@ with aba_nutricao:
 
     st.divider()
 
-    # Pergunta personalizada para a IA sobre Nutrição
     st.markdown("### 🤖 Pergunte ao Nutri-OssBot")
     pergunta_nutri = st.text_input("Digite sua dúvida sobre alimentação, suplementos, bater peso ou descanso:", placeholder="Ex: O que comer na manhã do campeonato de Jiu-Jitsu?")
 
@@ -926,7 +930,6 @@ with aba_nutricao:
                         "Você é o OssBot no modo Nutricionista Esportivo focado em Jiu-Jitsu Brasileiro. "
                         f"O atleta pesa {peso_atleta}kg e treina {horas_treino}h por dia. "
                         "Responda à dúvida dele com conselhos práticos, seguros e fáceis de aplicar no dia a dia do tatame. "
-                        "Lembre de recomendar consultar um nutricionista profissional para dietas específicas. "
                         f"Dúvida do atleta: {pergunta_nutri}"
                     )
                     
@@ -948,3 +951,101 @@ with aba_nutricao:
 
                 except Exception as e:
                     st.error(f"Erro ao processar consulta nutricional: {e}")
+
+# ===========================================================================
+# ABA 5: GERADOR DE ESTRATÉGIAS & CAMPEONATO (NOVA)
+# ===========================================================================
+with aba_camp:
+    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>🏆 GERADOR DE ESTRATÉGIA, CRONOGRAMA & TÁTICA DE CAMPEONATO</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #ffffff !important;'>Monte um plano completo de treino e um plano tático de luta passo a passo personalizado para a sua próxima competição!</p>", unsafe_allow_html=True)
+    
+    st.divider()
+
+    st.markdown("### 1. 🥋 Dados do Atleta e da Competição")
+    col_c1, col_c2, col_c3 = st.columns(3)
+    
+    with col_c1:
+        faixa_camp = st.selectbox("Sua Faixa Atual:", ["Branca", "Cinza / Amarela / Laranja / Verde (Kids)", "Azul", "Roxa", "Castanha", "Preta"], key="camp_faixa")
+    with col_c2:
+        cat_peso = st.text_input("Categoria de Peso e Idade:", value="Infanto-Juvenil / Médio", placeholder="Ex: Juvenil Leve, Adulto Médio", key="camp_cat")
+    with col_c3:
+        tempo_camp = st.selectbox("Tempo até o Campeonato:", ["1 semana (Polimento e Bateção de Peso)", "2 semanas (Ajustes Finais)", "1 mês (Preparação Completa)", "2 meses ou mais (Camp Longo)"], key="camp_tempo")
+
+    st.divider()
+
+    st.markdown("### 2. 🤺 Seu Estilo Principal de Jogo")
+    col_e1, col_e2, col_e3 = st.columns(3)
+    
+    with col_e1:
+        pref_inicio = st.selectbox("Como gosta de começar a luta?", ["Puxar para a guarda imediatamente", "Buscar a queda (Lutar em pé)", "Mudar conforme a atitude do adversário"], key="camp_inicio")
+    with col_e2:
+        estilo_jogo = st.selectbox("Sua especialidade principal:", ["Guardeiro (Guarda Aranha, De La Riva, Fechada, Meia)", "Passador (Passagem torando, emborcando, pressão)", "Híbrido (Jogo completo por cima e por baixo)"], key="camp_estilo")
+    with col_e3:
+        golpe_favorito = st.text_input("Sua Finalização / Golpe Favorito:", value="Armlock da Guarda / Raspagem de Gancho", placeholder="Ex: Triângulo, Chave de pé, Montada", key="camp_golpe")
+
+    st.divider()
+
+    st.markdown("### 3. 🎯 O que você precisa melhorar antes da luta?")
+    pontos_fracos = st.multiselect(
+        "Selecione seus pontos de atenção para a IA ajustar na sua preparação:",
+        ["Defesa de Quedas", "Escapar da Montada / Costas", "Gás / Resistência nos minutos finais", "Fazer pegadas sem cansar a mão", "Controle do nervosismo / Ansiedade", "Evitar punições por falta de combatividade"],
+        default=["Gás / Resistência nos minutos finais", "Controle do nervosismo / Ansiedade"],
+        key="camp_fracos"
+    )
+
+    st.divider()
+
+    if st.button("🚀 GERAR CRONOGRAMA DE TREINO & PLANO TÁTICO DE LUTA", use_container_width=True, key="btn_gerar_camp"):
+        if not client:
+            st.error("Erro na chave da API Groq.")
+        else:
+            with st.spinner("O OssBot está criando sua estratégia de campeão... OSS! 🥋🏆"):
+                try:
+                    prompt_camp = f"""
+                    Você é o OssBot, o maior estrategista e treinador de Jiu-Jitsu Brasileiro (BJJ) do mundo.
+                    Crie um plano completo e altamente detalhado de preparação e tática de luta para um atleta com os seguintes dados:
+
+                    - Faixa: {faixa_camp}
+                    - Categoria/Idade: {cat_peso}
+                    - Tempo até o campeonato: {tempo_camp}
+                    - Início de luta preferido: {pref_inicio}
+                    - Estilo de jogo: {estilo_jogo}
+                    - Golpe/Finalização favorita: {golpe_favorito}
+                    - Pontos fracos a corrigir: {', '.join(pontos_fracos) if pontos_fracos else 'Nenhum especificado'}
+
+                    A sua resposta DEVE conter obrigatoriamente duas seções principais bem organizadas com emojis e tópicos claros:
+
+                    1. 📅 CRONOGRAMA SEMANAL DE TREINOS & PREPARAÇÃO:
+                       - Quantas horas treinar por dia e divisão entre treino técnico, rolas específicos no tempo da luta e descanso.
+                       - Rotina detalhada dividida pelas semanas até o evento.
+                       - Dicas de preparação mental para a ansiedade.
+
+                    2. 🎯 PLANO TÁTICO DE LUTA PASSO A PASSO (PARA A HORA DA LUTA):
+                       - Primeiros 30 segundos: Estratégia de pegadas e como impor o início ({pref_inicio}).
+                       - Desenvolvimento (Plano A): Como caminhar a luta para chegar no seu ponto forte ({golpe_favorito}).
+                       - Plano B (Emergência): O que fazer se o adversário defender seu ataque ou se você estiver perdendo nos pontos faltando 1 minuto.
+                    """
+
+                    res_camp = client.chat.completions.create(
+                        model=MODELO,
+                        messages=[{"role": "user", "content": prompt_camp}],
+                        temperature=0.7
+                    )
+
+                    texto_plano = res_camp.choices[0].message.content
+                    
+                    st.markdown("""
+                    <div class='camp-box'>
+                        <h2 style='color: #00ffcc; text-align: center;'>🥇 SEU PLANO DE CAMPEÃO ESTÁ PRONTO!</h2>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    st.markdown(texto_plano)
+
+                    if st.button("🔊 Ouvir Estratégia de Campeonato", key="ouvir_camp"):
+                        audio_camp_bytes = gerar_audio(texto_plano)
+                        if audio_camp_bytes:
+                            st.audio(audio_camp_bytes, format="audio/mp3")
+
+                except Exception as e:
+                    st.error(f"Erro ao gerar plano de campeonato: {e}")
