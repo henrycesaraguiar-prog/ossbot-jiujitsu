@@ -134,13 +134,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização visual: Dark Mode profissional
+# Estilização visual: Dark Mode profissional com texto SEMPRE EM BRANCO
 st.markdown("""
     <style>
-    .stApp { background-color: #121212; color: #e0e0e0; }
+    .stApp { background-color: #121212; color: #ffffff; }
     .main { background-color: #121212; }
-    h1, h2, h3, h4, h5, h6, span, label { color: #ffffff !important; }
-    p { color: #ff4d4d !important; }
+    h1, h2, h3, h4, h5, h6, span, label, div, p { color: #ffffff !important; }
+    
+    /* Forçar texto de mensagens do chat e markdown estritamente em branco para leitura perfeita */
+    div[data-testid="stChatMessage"] p,
+    div[data-testid="stChatMessage"] span,
+    div[data-testid="stChatMessage"] div,
+    div[data-testid="stChatMessage"] li,
+    div[data-testid="stChatMessage"] label,
+    .stMarkdown p,
+    .stMarkdown span,
+    .stMarkdown li {
+        color: #ffffff !important;
+    }
+
     div[data-testid="stFileUploader"], div[data-testid="stAudioInput"], div[data-testid="stCameraInput"] {
         background-color: #2b2b2b !important; border-radius: 10px; padding: 15px; border: 1px solid #444444;
     }
@@ -634,15 +646,15 @@ with aba_kids:
         if client:
             with st.spinner("Criando dinâmica divertida para a garotada... OSS! 🥋"):
                 p_kids = f"""
-                Você é o OssBot especialista em pedagogia infantil de Jiu-Jitsu. Crie um plano de aula completo para:
-                - Faixa etária: {faixa_etaria}
-                - Tema: {tema_aula}
-                - Duração: {duracao_aula}
-                Estruture com:
-                1. 🧸 Aquecimento Lúdico / Brincadeira (com regras de segurança).
-                2. 🥋 Técnica Principal (explicada de forma super lúdica e simples para crianças).
-                3. 🎮 Mini-Jogo / Treino Específico Divertido.
-                4. 📜 Mensagem Final de Disciplina e Respeito.
+                You are OssBot specializing in BJJ kids pedagogy. Create a complete lesson plan for:
+                - Age group: {faixa_etaria}
+                - Theme: {tema_aula}
+                - Duration: {duracao_aula}
+                Structure with:
+                1. 🧸 Ludic Warm-up / Game (with safety rules).
+                2. 🥋 Main Technique (simple and ludic for kids).
+                3. 🎮 Mini-game / Specific drill.
+                4. 📜 Final message of discipline and respect.
                 """
                 res = client.chat.completions.create(model=MODELO, messages=[{"role": "user", "content": p_kids}], temperature=0.7)
                 txt_k = res.choices[0].message.content
