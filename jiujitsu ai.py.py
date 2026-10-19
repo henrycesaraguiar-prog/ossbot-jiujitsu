@@ -9,12 +9,17 @@ from datetime import datetime
 import streamlit as st
 import streamlit.components.v1 as components
 from groq import Groq
-from gTTS import gTTS
 
-# ---------------------------------------------------------------------------
-# Funções de áudio
-# ---------------------------------------------------------------------------
+# Tenta carregar a biblioteca de voz gTTS (se não tiver instalada, avisa com elegância)
+try:
+    from gTTS import gTTS
+    tem_gtts = True
+except ImportError:
+    tem_gtts = False
+
 def gerar_audio(texto):
+    if not tem_gtts:
+        return b""
     limpo = (
         texto.replace("*", "")
         .replace("#", "")
@@ -92,7 +97,6 @@ def apagar_conversa(cid):
     if cid == st.session_state.conversa_id:
         iniciar_nova_conversa()
 
-# Função para gerar Atalhos Inteligentes com base no histórico do usuário
 def gerar_atalhos_inteligentes(conversas):
     palavras_chave = {}
     termos_comuns = {"como", "para", "qual", "uma", "com", "que", "dos", "das", "por", "sobre", "mais", "isso", "ele", "ela"}
@@ -106,11 +110,9 @@ def gerar_atalhos_inteligentes(conversas):
                     if len(p_limpa) > 3 and p_limpa not in termos_comuns:
                         palavras_chave[p_limpa] = palavras_chave.get(p_limpa, 0) + 1
                         
-    # Ordena os termos mais frequentes
     ordenados = sorted(palavras_chave.items(), key=lambda x: x[1], reverse=True)
     top_temos = [item[0].capitalize() for item in ordenados[:4]]
     
-    # Se não houver histórico suficiente, usa atalhos padrão de Jiu-Jitsu
     if not top_temos:
         return ["Guarda", "Raspagem", "Campeonato", "Kids"]
     return top_temos
@@ -432,7 +434,6 @@ with aba_modo_luta:
         
     st.divider()
     
-    # Seção do Cronômetro e Seletor de Tempo (1 a 10 minutos)
     col_tempo1, col_tempo2, col_tempo3 = st.columns([1, 2, 1])
     
     with col_tempo2:
@@ -473,7 +474,6 @@ with aba_modo_luta:
 
     st.divider()
 
-    # Marcador de Áudio para Pontuação
     st.markdown("### 🎙️ Ajuda por Voz (Opcional)")
     st.info("💡 **Quer usar a voz?** Fale o golpe e o atleta: Exemplo: *'Queda do Atleta Azul'*, *'Passagem de guarda do Atleta 2'*, etc. Ou use os botões abaixo!")
     
@@ -536,7 +536,6 @@ with aba_modo_luta:
 
     st.divider()
 
-    # Placar Manual (Botões na mão)
     col_p1, col_p2 = st.columns(2)
     
     with col_p1:
@@ -618,7 +617,6 @@ with aba_chat:
         except Exception:
             return fallback
 
-    # Seleção de Modo de Resposta
     st.markdown("### ⚙️ Escolha o Modo de Atendimento")
     modo_selecionado = st.radio(
         "Como você quer que o OssBot responda a sua próxima pergunta?",
@@ -643,7 +641,6 @@ with aba_chat:
 
     st.divider()
 
-    # Atalhos Inteligentes Baseados no Histórico do Usuário
     st.markdown("### ⚡ Atalhos Inteligentes (Baseados no seu Histórico)")
     atalhos_personalizados = gerar_atalhos_inteligentes(st.session_state.conversas)
     
@@ -683,14 +680,17 @@ with aba_chat:
             if mensagem["role"] == "assistant":
                 if st.button("🔊 Ouvir resposta", key=f"ouvir_{i}"):
                     try:
-                        st.audio(gerar_audio(mensagem["content"]), format="audio/mp3")
+                        audio_bytes = gerar_audio(mensagem["content"])
+                        if audio_bytes:
+                            st.audio(audio_bytes, format="audio/mp3")
+                        else:
+                            st.info("Áudio indisponível no momento.")
                     except Exception as e:
                         st.error(f"Erro ao gerar o áudio: {e}")
 
     texto_para_enviar = None
     pergunta_texto = st.chat_input("Digite sua dúvida técnica, pedido de dinâmica kids ou estratégia...")
 
-    # Se clicou em um atalho inteligente, define o texto para enviar
     if st.session_state.atalho_clicado:
         texto_para_enviar = st.session_state.atalho_clicado
         st.session_state.atalho_clicado = None
@@ -753,9 +753,6 @@ with aba_chat:
         with st.chat_message("user"):
             st.image(imagem_enviada, caption="Imagem enviada", use_container_width=True)
 
-    if texto_para_enviar and not any(m["content"] == texto_para_enviar for m in st.session_state.historico[-1:]):
-        pass # Já tratado acima
-
     if texto_para_enviar:
         if not client:
             st.error("Erro na chave de API da Groq.")
@@ -794,7 +791,11 @@ with aba_chat:
 
                         if st.button("🔊 Ouvir resposta", key=f"ouvir_{len(st.session_state.historico) - 1}"):
                             try:
-                                st.audio(gerar_audio(resposta_texto), format="audio/mp3")
+                                audio_bytes = gerar_audio(resposta_texto)
+                                if audio_bytes:
+                                    st.audio(audio_bytes, format="audio/mp3")
+                                else:
+                                    st.info("Áudio indisponível no momento.")
                             except Exception as e:
                                 st.error(f"Erro ao gerar o áudio: {e}")
                     except Exception as e:
