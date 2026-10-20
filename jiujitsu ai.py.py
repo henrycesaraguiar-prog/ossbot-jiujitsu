@@ -157,7 +157,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS Limpa (Sem vazar texto na tela, contrastes ajustados para caixas legíveis)
+# Estilização CSS Profissional e Limpa (Sem códigos vazando, labels e caixas perfeitamente visíveis)
 st.markdown("""
 <head>
     <link rel="manifest" href="data:application/manifest+json;utf8,{\"name\":\"OssBot Jiu-Jitsu App\",\"short_name\":\"OssBot\",\"start_url\":\"/\",\"display\":\"standalone\",\"background_color\":\"#121212\",\"theme_color\":\"#ff4d4d\",\"icons\":[{\"src\":\"https://em-content.zobj.net/source/apple/354/martial-arts-uniform_1f94b.png\",\"sizes\":\"192x192\",\"type\":\"image/png\"}]}">
@@ -171,10 +171,10 @@ st.markdown("""
 .main { background-color: #121212; }
 h1, h2, h3, h4, h5, h6, span, label, div, p { color: #ffffff !important; }
 
-/* Campos de texto, inputs e selects com fundo claro e texto bem preto/visível */
+/* Caixas de input, texto e seletores com fundo limpo e contraste excelente */
 input, textarea, select {
-    background-color: #f8fafc !important;
-    color: #0f172a !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
     font-weight: bold !important;
     border: 2px solid #ff4d4d !important;
     border-radius: 8px !important;
@@ -183,20 +183,20 @@ input, textarea, select {
 div[data-testid="stTextInput"] input, 
 div[data-testid="stTextArea"] textarea, 
 div[data-testid="stSelectbox"] div[data-baseweb="select"] {
-    background-color: #f8fafc !important;
-    color: #0f172a !important;
-    -webkit-text-fill-color: #0f172a !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
 }
 
-/* Uploaders com contraste legível */
+/* Uploaders limpos e legíveis */
 div[data-testid="stFileUploader"] {
-    background-color: #f8fafc !important;
+    background-color: #ffffff !important;
     border-radius: 10px !important;
     padding: 15px !important;
     border: 2px dashed #ff4d4d !important;
 }
 div[data-testid="stFileUploader"] * {
-    color: #0f172a !important;
+    color: #000000 !important;
 }
 
 div[data-testid="stAudioInput"], div[data-testid="stCameraInput"] {
@@ -387,7 +387,7 @@ with col_dir:
 
 st.divider()
 
-# Abas Principais (14 Abas - Sem o "testão" gigante do PWA)
+# Abas Principais (14 Abas - "Testão" do PWA totalmente removido)
 aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao, aba_grad, aba_kimono, aba_card, aba_caderneta, aba_chaves = st.tabs([
     "💬 Chat IA", 
     "🤼 Luta", 
@@ -576,7 +576,7 @@ with aba_camp:
         """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 6: CURSOS (Uploads e textos legíveis)
+# ABA 6: CURSOS
 # ===========================================================================
 with aba_cursos:
     st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 MANUAL DE REGRAS & CURSOS BJJ</h2>", unsafe_allow_html=True)
@@ -624,7 +624,7 @@ with aba_cursos:
             """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 7: AULAS KIDS (Áudio e texto com campos visíveis)
+# ABA 7: AULAS KIDS
 # ===========================================================================
 with aba_kids:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>👶 AULAS & DINÂMICAS KIDS</h2>", unsafe_allow_html=True)
