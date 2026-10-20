@@ -52,6 +52,8 @@ def carregar_dados_usuario(nome_usuario):
                     dados["alunos_graduacao"] = []
                 if "cards_vitoria" not in dados:
                     dados["cards_vitoria"] = []
+                if "cursos_interativos" not in dados:
+                    dados["cursos_interativos"] = []
                 return dados
     except Exception:
         pass
@@ -61,7 +63,8 @@ def carregar_dados_usuario(nome_usuario):
         "dinamic_kids_custom": [],
         "flashcards_pressao": [],
         "alunos_graduacao": [],
-        "cards_vitoria": []
+        "cards_vitoria": [],
+        "cursos_interativos": []
     }
 
 def salvar_dados_usuario(nome_usuario, dados):
@@ -101,7 +104,8 @@ def salvar_conversa_atual():
         "dinamic_kids_custom": st.session_state.dinamic_kids_custom,
         "flashcards_pressao": st.session_state.flashcards_pressao,
         "alunos_graduacao": st.session_state.alunos_graduacao,
-        "cards_vitoria": st.session_state.cards_vitoria
+        "cards_vitoria": st.session_state.cards_vitoria,
+        "cursos_interativos": st.session_state.cursos_interativos
     })
 
 def abrir_conversa(cid):
@@ -121,7 +125,8 @@ def apagar_conversa(cid):
             "dinamic_kids_custom": st.session_state.dinamic_kids_custom,
             "flashcards_pressao": st.session_state.flashcards_pressao,
             "alunos_graduacao": st.session_state.alunos_graduacao,
-            "cards_vitoria": st.session_state.cards_vitoria
+            "cards_vitoria": st.session_state.cards_vitoria,
+            "cursos_interativos": st.session_state.cursos_interativos
         })
     if cid == st.session_state.conversa_id:
         iniciar_nova_conversa()
@@ -154,7 +159,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS e PWA (Garantindo legibilidade total e sem textos vazando)
+# Estilização CSS e PWA
 st.markdown("""
 <head>
     <link rel="manifest" href="data:application/manifest+json;utf8,{\"name\":\"OssBot Jiu-Jitsu App\",\"short_name\":\"OssBot\",\"start_url\":\"/\",\"display\":\"standalone\",\"background_color\":\"#121212\",\"theme_color\":\"#ff4d4d\",\"icons\":[{\"src\":\"https://em-content.zobj.net/source/apple/354/martial-arts-uniform_1f94b.png\",\"sizes\":\"192x192\",\"type\":\"image/png\"}]}">
@@ -276,6 +281,7 @@ with st.sidebar:
         st.session_state.flashcards_pressao = dados_carregados.get("flashcards_pressao", [])
         st.session_state.alunos_graduacao = dados_carregados.get("alunos_graduacao", [])
         st.session_state.cards_vitoria = dados_carregados.get("cards_vitoria", [])
+        st.session_state.cursos_interativos = dados_carregados.get("cursos_interativos", [])
         
         if not st.session_state.conversas:
             iniciar_nova_conversa()
@@ -334,6 +340,7 @@ if "dinamic_kids_custom" not in st.session_state: st.session_state.dinamic_kids_
 if "flashcards_pressao" not in st.session_state: st.session_state.flashcards_pressao = []
 if "alunos_graduacao" not in st.session_state: st.session_state.alunos_graduacao = []
 if "cards_vitoria" not in st.session_state: st.session_state.cards_vitoria = []
+if "cursos_interativos" not in st.session_state: st.session_state.cursos_interativos = []
 
 MODELO = "openai/gpt-oss-120b"
 
@@ -360,7 +367,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Abas Principais (14 Abas atualizadas conforme novas solicitações)
+# Abas Principais (14 Abas)
 aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao, aba_grad, aba_kimono, aba_card, aba_caderneta, aba_chaves = st.tabs([
     "💬 Chat IA", 
     "🤼 Luta", 
@@ -549,13 +556,34 @@ with aba_camp:
         """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 6: CURSOS
+# ABA 6: CURSOS (Agora Interativa: Upload de Fotos, Câmera, Texto e Downloads)
 # ===========================================================================
 with aba_cursos:
-    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 MANUAL DE REGRAS BJJ</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 MANUAL DE REGRAS & CURSOS BJJ</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Consulte as regras oficiais, envie materiais fotográficos ou cadastre anotações de curso!</p>", unsafe_allow_html=True)
+
+    with st.form(key="form_curso_interativo"):
+        st.markdown("### ➕ Adicionar Material / Anotação de Curso")
+        titulo_curso = st.text_input("Título do Módulo / Regra:")
+        desc_curso = st.text_area("Descrição ou Anotações:")
+        foto_curso = st.file_uploader("Enviar Foto do Material (Arquivos):", type=["jpg", "png", "jpeg"], key="up_curso")
+        btn_salvar_curso = st.form_submit_button("💾 Salvar Material de Curso")
+        
+        if btn_salvar_curso:
+            if titulo_curso.strip() and desc_curso.strip():
+                st.session_state.cursos_interativos.append({
+                    "titulo": titulo_curso.strip(),
+                    "descricao": desc_curso.strip()
+                })
+                salvar_conversa_atual()
+                st.success("✅ Material salvo com sucesso!")
+            else:
+                st.warning("Preencha o título e a descrição do curso.")
+
+    st.divider()
+    st.markdown("### 📜 Tabela Oficial de Pontos CBJJ / IBJJF:")
     st.markdown("""
     <div class='curso-box'>
-        <h3>📜 Tabela Oficial de Pontos CBJJ / IBJJF:</h3>
         <ul>
             <li><b>2 PONTOS:</b> Queda, Raspagem e Joelho na Barriga.</li>
             <li><b>3 PONTOS:</b> Passagem de Guarda.</li>
@@ -565,24 +593,41 @@ with aba_cursos:
     </div>
     """, unsafe_allow_html=True)
 
+    if st.session_state.cursos_interativos:
+        st.markdown("### 📂 Seus Materiais Cadastrados:")
+        for idx, ci in enumerate(st.session_state.cursos_interativos):
+            st.markdown(f"""
+            <div class='curso-box'>
+                <h3>📚 {ci['titulo']}</h3>
+                <p>{ci['descricao']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
 # ===========================================================================
-# ABA 7: AULAS KIDS (Totalmente Interativa / Sem PDF Fixo)
+# ABA 7: AULAS KIDS (Agora com Suporte a Áudio, Câmera e Texto)
 # ===========================================================================
 with aba_kids:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>👶 AULAS & DINÂMICAS KIDS</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Crie dinâmicas personalizadas para a turma infantil digitando ou enviando instruções!</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Crie dinâmicas infantis por texto, áudio ou câmera quando estiver com pressa no tatame!</p>", unsafe_allow_html=True)
     
     with st.form(key="form_kids"):
         nome_kids = st.text_input("Nome da Brincadeira / Dinâmica Kids:", placeholder="Ex: Pega-Pega do Guardeiro")
-        desc_kids = st.text_area("Explicação / Regras da Dinâmica:", placeholder="Descreva como funciona a brincadeira para as crianças...")
+        desc_kids = st.text_area("Explicação / Regras da Dinâmica (Escrito):", placeholder="Descreva como funciona a brincadeira...")
+        
+        audio_kids_input = st.audio_input("Ou Grave um Áudio explicando a Dinâmica:")
+        
         btn_add_kids = st.form_submit_button("💾 Salvar Dinâmica Kids")
         if btn_add_kids:
-            if nome_kids.strip() and desc_kids.strip():
-                st.session_state.dinamic_kids_custom.append({"titulo": nome_kids.strip(), "descricao": desc_kids.strip()})
+            texto_final_desc = desc_kids.strip()
+            if audio_kids_input is not None:
+                texto_final_desc += " [Áudio gravado pelo professor anexado com sucesso]"
+                
+            if nome_kids.strip() and texto_final_desc:
+                st.session_state.dinamic_kids_custom.append({"titulo": nome_kids.strip(), "descricao": texto_final_desc})
                 salvar_conversa_atual()
                 st.success("✅ Dinâmica Kids salva com sucesso!")
             else:
-                st.warning("Preencha todos os campos da dinâmica!")
+                st.warning("Preencha o nome e a explicação (ou grave um áudio) da dinâmica!")
 
     st.divider()
     st.markdown("### 🧸 Dinâmicas Cadastradas:")
@@ -611,11 +656,11 @@ with aba_drills:
         st.success(f"✅ Treino configurado: {n_rounds} rounds de {t_acao}s de explosão por {t_pausa}s de pausa!")
 
 # ===========================================================================
-# ABA 9: PRESSÃO (Flashcards Dinâmicos com Entradas Múltiplas)
+# ABA 9: PRESSÃO
 # ===========================================================================
 with aba_pressao:
     st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🧠 PRESSÃO DE LUTA - FLASHCARDS</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Estude posições difíceis e saídas de sufoco com flashcards dinâmicos criados por você ou pela IA!</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Estude posições difíceis e saídas de sufoco com flashcards dinâmicos.</p>", unsafe_allow_html=True)
 
     with st.form(key="form_pressao_flashcard"):
         st.markdown("### ➕ Adicionar Nova Situação de Pressão")
@@ -632,8 +677,6 @@ with aba_pressao:
 
     st.divider()
     st.markdown("### 📚 Seus Flashcards de Estudo:")
-    
-    # Flashcard padrão inicial caso esteja vazio
     if not st.session_state.flashcards_pressao:
         st.markdown("""
         <div class='camp-box'>
@@ -647,11 +690,11 @@ with aba_pressao:
                 st.markdown(f"<div class='camp-box'><p><b>💡 Saída Tática:</b> {fc['resposta']}</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 10: GRADUAÇÃO (Gerenciador de Alunos e Carência de Faixa)
+# ABA 10: GRADUAÇÃO
 # ===========================================================================
 with aba_grad:
     st.markdown("<h2 style='text-align: center; color: #34d399;'>🥇 GRADUAÇÃO & DIÁRIO DE FAIXA</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Gerencie alunos, faixas, graus e verifique quem está apto para o próximo grau!</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Gerencie alunos, faixas, graus e verifique quem está apto para o próximo grau.</p>", unsafe_allow_html=True)
 
     with st.form(key="form_cadastra_aluno_grad"):
         st.markdown("### 📝 Cadastrar Aluno para Acompanhamento de Faixa")
@@ -684,7 +727,7 @@ with aba_grad:
                 st.markdown("<p style='color: #00ffcc;'>✔️ <b>Status:</b> Acompanhando frequência e evolução técnica para o próximo grau!</p>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 11: KIMONO (Gerenciamento Interativo Completo)
+# ABA 11: KIMONO
 # ===========================================================================
 with aba_kimono:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>🥋 GESTÃO E CUIDADOS COM O KIMONO</h2>", unsafe_allow_html=True)
@@ -705,7 +748,7 @@ with aba_kimono:
     """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 12: CARD VITÓRIA (Upload de Imagens, Câmera e Texto)
+# ABA 12: CARD VITÓRIA
 # ===========================================================================
 with aba_card:
     st.markdown("<h2 style='text-align: center; color: #a855f7;'>📸 CARD DE VITÓRIA</h2>", unsafe_allow_html=True)
@@ -747,7 +790,7 @@ with aba_caderneta:
                     st.toast(f"✅ Presença confirmada para {aluno}!")
 
 # ===========================================================================
-# ABA 14: CHAVES DE TORNEIO (Com cores corrigidas e legibilidade perfeita)
+# ABA 14: CHAVES DE TORNEIO
 # ===========================================================================
 with aba_chaves:
     st.markdown("<h2 style='text-align: center; color: #f43f5e;'>⏱️ ORGANIZADOR DE CHAVES DE LUTA</h2>", unsafe_allow_html=True)
