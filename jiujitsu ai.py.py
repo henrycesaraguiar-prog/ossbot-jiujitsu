@@ -9,22 +9,17 @@ from datetime import datetime
 import streamlit as st
 import streamlit.components.v1 as components
 
-# Tenta carregar a biblioteca de voz gTTS apenas se necessário
+# Tenta carregar biblioteca de áudio sem travar a execução
 try:
     from gTTS import gTTS
     tem_gtts_lib = True
-except ImportError:
+except Exception:
     tem_gtts_lib = False
 
 def gerar_audio_local(texto):
     if not tem_gtts_lib:
         return b""
-    limpo = (
-        texto.replace("*", "")
-        .replace("#", "")
-        .replace("|", " ")
-        .replace("_", " ")
-    )
+    limpo = texto.replace("*", "").replace("#", "").replace("|", " ").replace("_", " ")
     buffer = io.BytesIO()
     try:
         gTTS(text=limpo, lang="pt", slow=False).write_to_fp(buffer)
@@ -33,7 +28,7 @@ def gerar_audio_local(texto):
         return b""
 
 # ---------------------------------------------------------------------------
-# Gerenciamento de dados por Usuário (Nome e Sobrenome)
+# Gerenciamento de dados por Usuário
 # ---------------------------------------------------------------------------
 PASTA_DADOS = os.path.dirname(os.path.abspath(__file__))
 
@@ -61,7 +56,7 @@ def salvar_dados_usuario(nome_usuario, dados):
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(dados, f, ensure_ascii=False, indent=2)
         os.replace(tmp, caminho)
-    except Exception as e:
+    except Exception:
         pass
 
 SAUDACAO_PADRAO = (
@@ -128,7 +123,7 @@ def gerar_atalhos_inteligentes(conversas):
         return ["Guarda", "Raspagem", "Campeonato", "Kids"]
     return top_temos
 
-# Configuração da página do Streamlit
+# Configuração da página
 st.set_page_config(
     page_title="OssBot - Assistente de Jiu-Jitsu",
     page_icon="🥋",
@@ -136,8 +131,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização visual: Dark Mode com texto SEMPRE EM BRANCO
+# Configuração de Suporte PWA (App Instalável) + Estilização Dark Mode
 st.markdown("""
+    <head>
+        <link rel="manifest" href="data:application/manifest+json;utf8,{\"name\":\"OssBot Jiu-Jitsu App\",\"short_name\":\"OssBot\",\"start_url\":\"/\",\"display\":\"standalone\",\"background_color\":\"#121212\",\"theme_color\":\"#ff4d4d\",\"icons\":[{\"src\":\"https://em-content.zobj.net/source/apple/354/martial-arts-uniform_1f94b.png\",\"sizes\":\"192x192\",\"type\":\"image/png\"}]}">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="theme-color" content="#ff4d4d">
+    </head>
     <style>
     .stApp { background-color: #121212; color: #ffffff; }
     .main { background-color: #121212; }
@@ -174,6 +176,7 @@ st.markdown("""
     .curso-box { background-color: #0f172a; border: 2px solid #38bdf8; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
     .kids-box { background-color: #451a03; border: 2px solid #fbbf24; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
     .extra-box { background-color: #064e3b; border: 2px solid #34d399; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+    .pwa-box { background-color: #111827; border: 2px dashed #00ffcc; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -231,9 +234,7 @@ doc.body.appendChild(caixa);
 </script>
 """, height=0)
 
-# ---------------------------------------------------------------------------
 # Barra Lateral - Identificação
-# ---------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("## 🥋 Identificação")
     usuario_input = st.text_input(
@@ -291,7 +292,7 @@ if "ultimo_audio" not in st.session_state: st.session_state.ultimo_audio = None
 if "ultima_imagem" not in st.session_state: st.session_state.ultima_imagem = None
 if "atalho_clicado" not in st.session_state: st.session_state.atalho_clicado = None
 
-# Inicialização do Modo Luta
+# Estados do Modo Luta
 if "pts_a" not in st.session_state: st.session_state.pts_a = 0
 if "vant_a" not in st.session_state: st.session_state.vant_a = 0
 if "pun_a" not in st.session_state: st.session_state.pun_a = 0
@@ -310,14 +311,23 @@ col_esq, col_centro, col_dir = st.columns([1.2, 2.6, 1.2])
 with col_esq:
     st.image("https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop", caption="Técnica e Combate", use_container_width=True)
 with col_centro:
-    st.markdown("<h1 style='text-align: center; color: #ff4d4d !important;'>🥋 OssBot</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #ff4d4d !important;'>🥋 OssBot App</h1>", unsafe_allow_html=True)
     st.markdown(f"<h4 style='text-align: center; color: #00ffcc;'>Usuário: {st.session_state.usuario_atual}</h4>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: #aaaaaa;'>O seu Assistente de Jiu-Jitsu</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #aaaaaa;'>O seu Assistente de Jiu-Jitsu (PWA)</h3>", unsafe_allow_html=True)
 
 with col_dir:
     st.image("https://images.unsplash.com/photo-1555597673-b21d5c935865?q=80&w=600&auto=format&fit=crop", caption="Faixa Preta — Tradição", use_container_width=True)
 
 st.divider()
+
+# Banner de Dica para Instalação PWA
+st.markdown("""
+<div class='pwa-box'>
+    <h4 style='color: #00ffcc; margin:0;'>📱 INSTALE O OSSBOT NO SEU CELULAR!</h4>
+    <p style='margin:5px 0 0 0;'><b>No iPhone (Safari):</b> Toque em <i>Compartilhar</i> ➔ <i>Adicionar à Tela de Início</i>.<br>
+    <b>No Android (Chrome):</b> Toque nos <i>3 Pontinhos</i> ➔ <i>Adicionar à tela inicial</i> ou <i>Instalar Aplicativo</i>.</p>
+</div>
+""", unsafe_allow_html=True)
 
 # Abas Principais (17 Abas)
 aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao, aba_grad, aba_def, aba_lesao, aba_kimono, aba_card, aba_pesagem, aba_caderneta, aba_chaves = st.tabs([
@@ -345,7 +355,6 @@ aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos
 # ===========================================================================
 with aba_chat:
     st.markdown("### ⚙️ Escolha o Modo de Atendimento")
-    
     modo_selecionado = st.radio(
         "Como você quer que o OssBot responda?",
         [
@@ -357,9 +366,8 @@ with aba_chat:
     )
 
     if "Modo Offline" in modo_selecionado:
-        st.info("📡 **Modo Offline Ativado com Sucesso!** Nenhuma requisição de rede será feita nesta aba. Você pode navegar livremente e usar 100% das outras 16 abas abaixo sem gastar internet!")
+        st.info("📡 **Modo Offline Ativado!** Nenhuma requisição externa será feita nesta aba. Você pode usar 100% das outras 16 abas sem gastar nada da sua rede!")
     else:
-        # Só tenta conectar na API se o usuário escolher o modo Online
         client = None
         try:
             from groq import Groq
@@ -401,7 +409,7 @@ with aba_chat:
 
         if texto_para_enviar:
             if not client:
-                st.warning("⚠️ Sem conexão com a internet para rodar a IA online. Ative o 5G ou mude para a opção 'Modo Offline'!")
+                st.warning("⚠️ Sem rede para a IA. Mude para a opção 'Modo Offline'!")
             else:
                 with st.chat_message("assistant"):
                     with st.spinner("OssBot pensando... OSS! 🥋"):
@@ -412,10 +420,10 @@ with aba_chat:
                             st.session_state.historico.append({"role": "assistant", "content": resp})
                             salvar_conversa_atual()
                         except Exception:
-                            st.warning("Erro ao conectar com a IA. Ative o 'Modo Offline' se estiver sem sinal!")
+                            st.warning("Erro de rede com a IA.")
 
 # ===========================================================================
-# ABA 2: MODO LUTA (100% INDEPENDENTE DE INTERNET)
+# ABA 2: MODO LUTA
 # ===========================================================================
 with aba_modo_luta:
     st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR & CRONÔMETRO DE LUTA</h2>", unsafe_allow_html=True)
@@ -492,7 +500,7 @@ with aba_nutricao:
     peso_input = st.number_input("Digite seu Peso atual (kg):", 30.0, 150.0, 65.0, 0.5, key="nutri_peso")
     horas_input = st.slider("Horas de treino por dia:", 0.5, 4.0, 1.5, 0.5, key="nutri_horas")
     agua_calc = ((peso_input * 35) / 1000) + (horas_input * 0.75)
-    st.markdown(f"<div class='nutri-box'><h3>🥤 Meta Diária de Água Recomendada:</h3><h2>{agua_calc:.2f} Litros</h2><p>• Dica Offline: Beba 500ml de água 1h antes do treino e consuma carboidratos leves para energia sem desconforto.</p></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='nutri-box'><h3>🥤 Meta Diária de Água Recomendada:</h3><h2>{agua_calc:.2f} Litros</h2><p>• Dica: Beba 500ml de água 1h antes do treino e consuma carboidratos leves para ter energia sem desconforto.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
 # ABA 5: CAMPEONATO
