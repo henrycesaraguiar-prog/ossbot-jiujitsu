@@ -157,7 +157,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS Profissional e Limpa (Sem códigos vazando, labels e caixas perfeitamente visíveis)
+# Estilização CSS Corrigida e Blindada (Garantindo legibilidade total e botões visíveis)
 st.markdown("""
 <head>
     <link rel="manifest" href="data:application/manifest+json;utf8,{\"name\":\"OssBot Jiu-Jitsu App\",\"short_name\":\"OssBot\",\"start_url\":\"/\",\"display\":\"standalone\",\"background_color\":\"#121212\",\"theme_color\":\"#ff4d4d\",\"icons\":[{\"src\":\"https://em-content.zobj.net/source/apple/354/martial-arts-uniform_1f94b.png\",\"sizes\":\"192x192\",\"type\":\"image/png\"}]}">
@@ -171,10 +171,10 @@ st.markdown("""
 .main { background-color: #121212; }
 h1, h2, h3, h4, h5, h6, span, label, div, p { color: #ffffff !important; }
 
-/* Caixas de input, texto e seletores com fundo limpo e contraste excelente */
+/* Forçando inputs, textareas e seletores a terem fundo escuro e texto BRANCO totalmente visível */
 input, textarea, select {
-    background-color: #ffffff !important;
-    color: #000000 !important;
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
     font-weight: bold !important;
     border: 2px solid #ff4d4d !important;
     border-radius: 8px !important;
@@ -183,20 +183,20 @@ input, textarea, select {
 div[data-testid="stTextInput"] input, 
 div[data-testid="stTextArea"] textarea, 
 div[data-testid="stSelectbox"] div[data-baseweb="select"] {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    -webkit-text-fill-color: #000000 !important;
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
 }
 
-/* Uploaders limpos e legíveis */
+/* Uploaders e caixas com contraste excelente */
 div[data-testid="stFileUploader"] {
-    background-color: #ffffff !important;
+    background-color: #1e1e1e !important;
     border-radius: 10px !important;
     padding: 15px !important;
     border: 2px dashed #ff4d4d !important;
 }
 div[data-testid="stFileUploader"] * {
-    color: #000000 !important;
+    color: #ffffff !important;
 }
 
 div[data-testid="stAudioInput"], div[data-testid="stCameraInput"] {
@@ -207,13 +207,13 @@ div[data-testid="stAudioInput"], div[data-testid="stCameraInput"] {
 }
 
 div[data-testid="stChatInput"] {
-    background-color: #f0f0f0 !important;
+    background-color: #1e1e1e !important;
     border-radius: 10px !important;
     border: 2px solid #ff4d4d !important;
 }
 div[data-testid="stChatInput"] textarea {
-    color: #000000 !important;
-    background-color: #f0f0f0 !important;
+    color: #ffffff !important;
+    background-color: #1e1e1e !important;
     font-weight: bold !important;
     font-size: 16px !important;
 }
@@ -221,11 +221,11 @@ div[data-testid="stChatInput"] textarea {
 .stButton button {
     border-radius: 10px;
     font-weight: bold;
-    background-color: #333333;
-    color: #ff4d4d;
-    border: 1px solid #ff4d4d;
+    background-color: #ff4d4d;
+    color: #ffffff;
+    border: 2px solid #ffffff;
 }
-.stButton button:hover { background-color: #555555; color: #ffffff; }
+.stButton button:hover { background-color: #e60000; color: #ffffff; }
 
 .placar-box { background-color: #1e1e1e; border: 2px solid #ff4d4d; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
 .placar-numero { font-size: 50px; font-weight: bold; color: #00ffcc; }
@@ -387,7 +387,7 @@ with col_dir:
 
 st.divider()
 
-# Abas Principais (14 Abas - "Testão" do PWA totalmente removido)
+# Abas Principais (14 Abas - Sem o "testão" gigante do PWA)
 aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao, aba_grad, aba_kimono, aba_card, aba_caderneta, aba_chaves = st.tabs([
     "💬 Chat IA", 
     "🤼 Luta", 
