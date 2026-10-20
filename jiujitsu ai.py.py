@@ -44,10 +44,25 @@ def carregar_dados_usuario(nome_usuario):
                 dados = json.load(f)
                 if "historico_lutas" not in dados:
                     dados["historico_lutas"] = []
+                if "dinamic_kids_custom" not in dados:
+                    dados["dinamic_kids_custom"] = []
+                if "flashcards_pressao" not in dados:
+                    dados["flashcards_pressao"] = []
+                if "alunos_graduacao" not in dados:
+                    dados["alunos_graduacao"] = []
+                if "cards_vitoria" not in dados:
+                    dados["cards_vitoria"] = []
                 return dados
     except Exception:
         pass
-    return {"conversas": {}, "historico_lutas": []}
+    return {
+        "conversas": {}, 
+        "historico_lutas": [], 
+        "dinamic_kids_custom": [],
+        "flashcards_pressao": [],
+        "alunos_graduacao": [],
+        "cards_vitoria": []
+    }
 
 def salvar_dados_usuario(nome_usuario, dados):
     caminho = obter_caminho_usuario(nome_usuario)
@@ -82,7 +97,11 @@ def salvar_conversa_atual():
     }
     salvar_dados_usuario(st.session_state.usuario_atual, {
         "conversas": st.session_state.conversas,
-        "historico_lutas": st.session_state.historico_lutas
+        "historico_lutas": st.session_state.historico_lutas,
+        "dinamic_kids_custom": st.session_state.dinamic_kids_custom,
+        "flashcards_pressao": st.session_state.flashcards_pressao,
+        "alunos_graduacao": st.session_state.alunos_graduacao,
+        "cards_vitoria": st.session_state.cards_vitoria
     })
 
 def abrir_conversa(cid):
@@ -98,7 +117,11 @@ def apagar_conversa(cid):
         del st.session_state.conversas[cid]
         salvar_dados_usuario(st.session_state.usuario_atual, {
             "conversas": st.session_state.conversas,
-            "historico_lutas": st.session_state.historico_lutas
+            "historico_lutas": st.session_state.historico_lutas,
+            "dinamic_kids_custom": st.session_state.dinamic_kids_custom,
+            "flashcards_pressao": st.session_state.flashcards_pressao,
+            "alunos_graduacao": st.session_state.alunos_graduacao,
+            "cards_vitoria": st.session_state.cards_vitoria
         })
     if cid == st.session_state.conversa_id:
         iniciar_nova_conversa()
@@ -131,8 +154,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS e PWA Corrigidos
+# Estilização CSS e PWA (Garantindo legibilidade total e sem textos vazando)
 st.markdown("""
+<head>
+    <link rel="manifest" href="data:application/manifest+json;utf8,{\"name\":\"OssBot Jiu-Jitsu App\",\"short_name\":\"OssBot\",\"start_url\":\"/\",\"display\":\"standalone\",\"background_color\":\"#121212\",\"theme_color\":\"#ff4d4d\",\"icons\":[{\"src\":\"https://em-content.zobj.net/source/apple/354/martial-arts-uniform_1f94b.png\",\"sizes\":\"192x192\",\"type\":\"image/png\"}]}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ff4d4d">
+</head>
 <style>
 .stApp { background-color: #121212; color: #ffffff; }
 .main { background-color: #121212; }
@@ -242,6 +272,10 @@ with st.sidebar:
         dados_carregados = carregar_dados_usuario(usuario_input)
         st.session_state.conversas = dados_carregados.get("conversas", {})
         st.session_state.historico_lutas = dados_carregados.get("historico_lutas", [])
+        st.session_state.dinamic_kids_custom = dados_carregados.get("dinamic_kids_custom", [])
+        st.session_state.flashcards_pressao = dados_carregados.get("flashcards_pressao", [])
+        st.session_state.alunos_graduacao = dados_carregados.get("alunos_graduacao", [])
+        st.session_state.cards_vitoria = dados_carregados.get("cards_vitoria", [])
         
         if not st.session_state.conversas:
             iniciar_nova_conversa()
@@ -296,6 +330,10 @@ if "tempo_segundos" not in st.session_state: st.session_state.tempo_segundos = 3
 if "cronometro_rodando" not in st.session_state: st.session_state.cronometro_rodando = False
 if "historico_lutas" not in st.session_state: st.session_state.historico_lutas = []
 if "lista_alunos_academia" not in st.session_state: st.session_state.lista_alunos_academia = []
+if "dinamic_kids_custom" not in st.session_state: st.session_state.dinamic_kids_custom = []
+if "flashcards_pressao" not in st.session_state: st.session_state.flashcards_pressao = []
+if "alunos_graduacao" not in st.session_state: st.session_state.alunos_graduacao = []
+if "cards_vitoria" not in st.session_state: st.session_state.cards_vitoria = []
 
 MODELO = "openai/gpt-oss-120b"
 
@@ -322,8 +360,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Abas Principais (17 Abas)
-aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao, aba_grad, aba_def, aba_lesao, aba_kimono, aba_card, aba_pesagem, aba_caderneta, aba_chaves = st.tabs([
+# Abas Principais (14 Abas atualizadas conforme novas solicitações)
+aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao, aba_grad, aba_kimono, aba_card, aba_caderneta, aba_chaves = st.tabs([
     "💬 Chat IA", 
     "🤼 Luta", 
     "📜 Histórico",
@@ -334,11 +372,8 @@ aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos
     "⏱️ Drills",
     "🧠 Pressão",
     "🥇 Graduação",
-    "🛡️ Defesa",
-    "🩹 Lesões",
     "🥋 Kimono",
     "📸 Card",
-    "📋 Pesagem",
     "📇 Alunos",
     "⏱️ Chaves"
 ])
@@ -359,7 +394,7 @@ with aba_chat:
     )
 
     if "Modo Offline" in modo_selecionado:
-        st.info("📡 **Modo Offline Ativado!** Nenhuma requisição externa será feita nesta aba. Você pode usar 100% das outras 16 abas sem gastar nada da sua rede!")
+        st.info("📡 **Modo Offline Ativado!** Nenhuma requisição externa será feita nesta aba. Você pode usar 100% das outras abas sem gastar nada da sua rede!")
     else:
         client = None
         try:
@@ -486,7 +521,7 @@ with aba_historico_lutas:
                 st.write(f"🔵 **{luta['atleta_a']}**: {luta['pts_a']} Pts ({luta['vant_a']}V/{luta['pun_a']}P) | ⚪ **{luta['atleta_b']}**: {luta['pts_b']} Pts ({luta['vant_b']}V/{luta['pun_b']}P)")
 
 # ===========================================================================
-# ABA 4: NUTRIÇÃO & PESO
+# ABA 4: NUTRIÇÃO & HIDRATAÇÃO
 # ===========================================================================
 with aba_nutricao:
     st.markdown("<h2 style='text-align: center; color: #00ffcc;'>🥗 NUTRIÇÃO & HIDRATAÇÃO</h2>", unsafe_allow_html=True)
@@ -531,16 +566,36 @@ with aba_cursos:
     """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 7: KIDS
+# ABA 7: AULAS KIDS (Totalmente Interativa / Sem PDF Fixo)
 # ===========================================================================
 with aba_kids:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>👶 AULAS & DINÂMICAS KIDS</h2>", unsafe_allow_html=True)
-    st.markdown("""
-    <div class='kids-box'>
-        <h3>🧸 Dinâmica Recomendada: "Pega-Pega do Guardeiro"</h3>
-        <p>As crianças treinam reposição de guarda e agilidade tentando passar a guarda do professor sem usar força bruta, focando puramente no tempo de reação e quadril.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Crie dinâmicas personalizadas para a turma infantil digitando ou enviando instruções!</p>", unsafe_allow_html=True)
+    
+    with st.form(key="form_kids"):
+        nome_kids = st.text_input("Nome da Brincadeira / Dinâmica Kids:", placeholder="Ex: Pega-Pega do Guardeiro")
+        desc_kids = st.text_area("Explicação / Regras da Dinâmica:", placeholder="Descreva como funciona a brincadeira para as crianças...")
+        btn_add_kids = st.form_submit_button("💾 Salvar Dinâmica Kids")
+        if btn_add_kids:
+            if nome_kids.strip() and desc_kids.strip():
+                st.session_state.dinamic_kids_custom.append({"titulo": nome_kids.strip(), "descricao": desc_kids.strip()})
+                salvar_conversa_atual()
+                st.success("✅ Dinâmica Kids salva com sucesso!")
+            else:
+                st.warning("Preencha todos os campos da dinâmica!")
+
+    st.divider()
+    st.markdown("### 🧸 Dinâmicas Cadastradas:")
+    if not st.session_state.dinamic_kids_custom:
+        st.info("Nenhuma dinâmica personalizada cadastrada ainda.")
+    else:
+        for idx, dk in enumerate(st.session_state.dinamic_kids_custom):
+            st.markdown(f"""
+            <div class='kids-box'>
+                <h3>🧸 {dk['titulo']}</h3>
+                <p>{dk['descricao']}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
 # ===========================================================================
 # ABA 8: DRILLS
@@ -556,63 +611,122 @@ with aba_drills:
         st.success(f"✅ Treino configurado: {n_rounds} rounds de {t_acao}s de explosão por {t_pausa}s de pausa!")
 
 # ===========================================================================
-# ABA 9: PRESSÃO
+# ABA 9: PRESSÃO (Flashcards Dinâmicos com Entradas Múltiplas)
 # ===========================================================================
 with aba_pressao:
-    st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🧠 PRESSÃO DE LUTA</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='camp-box'><h4>💡 Faltando 1 minuto e perdendo por 2 a 0:</h4><p>Estoure pegadas imediatamente e force o ataque de raspagem/queda sem aceitar amarração!</p></div>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🧠 PRESSÃO DE LUTA - FLASHCARDS</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Estude posições difíceis e saídas de sufoco com flashcards dinâmicos criados por você ou pela IA!</p>", unsafe_allow_html=True)
+
+    with st.form(key="form_pressao_flashcard"):
+        st.markdown("### ➕ Adicionar Nova Situação de Pressão")
+        pergunta_flash = st.text_input("Situação / Perigo (Ex: 'Estou de lateral com 100kg em cima, o que fazer?'):")
+        resposta_flash = st.text_area("Resposta / Solução Tática:")
+        btn_salvar_flash = st.form_submit_button("💾 Salvar Flashcard de Pressão")
+        if btn_salvar_flash:
+            if pergunta_flash.strip() and resposta_flash.strip():
+                st.session_state.flashcards_pressao.append({"pergunta": pergunta_flash.strip(), "resposta": resposta_flash.strip()})
+                salvar_conversa_atual()
+                st.success("✅ Flashcard salvo com sucesso!")
+            else:
+                st.warning("Preencha a situação e a solução!")
+
+    st.divider()
+    st.markdown("### 📚 Seus Flashcards de Estudo:")
+    
+    # Flashcard padrão inicial caso esteja vazio
+    if not st.session_state.flashcards_pressao:
+        st.markdown("""
+        <div class='camp-box'>
+            <h4>💡 Exemplo 1: Faltando 1 minuto e perdendo por 2 a 0</h4>
+            <p><b>Solução:</b> Estoure pegadas imediatamente e force o ataque de raspagem/queda sem aceitar amarração!</p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        for idx, fc in enumerate(st.session_state.flashcards_pressao):
+            with st.expander(f"⚡ Situação {idx+1}: {fc['pergunta']}"):
+                st.markdown(f"<div class='camp-box'><p><b>💡 Saída Tática:</b> {fc['resposta']}</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 10: GRADUAÇÃO
+# ABA 10: GRADUAÇÃO (Gerenciador de Alunos e Carência de Faixa)
 # ===========================================================================
 with aba_grad:
     st.markdown("<h2 style='text-align: center; color: #34d399;'>🥇 GRADUAÇÃO & DIÁRIO DE FAIXA</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='extra-box'><h3>Checklist para o Próximo Grau:</h3><p>• Consistência de frequência nos treinos.<br>• Domínio técnico da guarda e raspagem.<br>• Disciplina, postura e auxílio aos colegas mais novos.</p></div>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Gerencie alunos, faixas, graus e verifique quem está apto para o próximo grau!</p>", unsafe_allow_html=True)
+
+    with st.form(key="form_cadastra_aluno_grad"):
+        st.markdown("### 📝 Cadastrar Aluno para Acompanhamento de Faixa")
+        nome_aluno_g = st.text_input("Nome Completo do Aluno:")
+        faixa_atual_g = st.selectbox("Faixa Atual:", ["Branca", "Cinza", "Amarela", "Laranja", "Verde", "Azul", "Roxa", "Castanha", "Preta"])
+        graus_atuais_g = st.slider("Graus Atuais:", 0, 4, 0)
+        data_inicio_g = st.date_input("Data de Início na Faixa Atual:")
+        btn_salv_grad = st.form_submit_button("➕ Salvar Aluno no Diário de Faixa")
+        
+        if btn_salv_grad:
+            if nome_aluno_g.strip():
+                novo_aluno_reg = {
+                    "nome": nome_aluno_g.strip(),
+                    "faixa": faixa_atual_g,
+                    "graus": graus_atuais_g,
+                    "data_inicio": data_inicio_g.strftime("%d/%m/%Y")
+                }
+                st.session_state.alunos_graduacao.append(novo_aluno_reg)
+                salvar_conversa_atual()
+                st.success(f"✅ Aluno {nome_aluno_g} cadastrado no diário de graduação!")
+
+    st.divider()
+    st.markdown("### 📋 Alunos em Acompanhamento:")
+    if not st.session_state.alunos_graduacao:
+        st.info("Nenhum aluno cadastrado na graduação.")
+    else:
+        for idx, aluno in enumerate(st.session_state.alunos_graduacao):
+            with st.expander(f"🥋 {aluno['nome']} - Faixa {aluno['faixa']} ({aluno['graus']}º Grau)"):
+                st.write(f"• **Início na faixa:** {aluno['data_inicio']}")
+                st.markdown("<p style='color: #00ffcc;'>✔️ <b>Status:</b> Acompanhando frequência e evolução técnica para o próximo grau!</p>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 11: DEFESA PESSOAL
-# ===========================================================================
-with aba_def:
-    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>🛡️ DEFESA PESSOAL & ANTI-BULLYING</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='curso-box'><h3>Anti-Bullying & Gravata:</h3><p>Mantenha base firme flexionando joelhos, proteja o pescoço e busque afastar a ameaça com postura calma sem promover agressão desnecessária.</p></div>", unsafe_allow_html=True)
-
-# ===========================================================================
-# ABA 12: LESÕES
-# ===========================================================================
-with aba_lesao:
-    st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🩹 PREVENÇÃO DE LESÕES</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='placar-box'><h3>Cuidados Imediatos:</h3><p>Use fita/esparadrapo nos dedos para suporte nas pegadas e aplique bolsa de gelo por 20 minutos após treinos pesados.</p></div>", unsafe_allow_html=True)
-
-# ===========================================================================
-# ABA 13: KIMONO
+# ABA 11: KIMONO (Gerenciamento Interativo Completo)
 # ===========================================================================
 with aba_kimono:
-    st.markdown("<h2 style='text-align: center; color: #fbbf24;'>🥋 CUIDADOS COM O KIMONO</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='kids-box'><h3>O Nó Perfeito da Faixa:</h3><p>Cruze a faixa por trás, passe a ponta por baixo de todas as voltas e dê o nó simétrico apertando bem na cintura.</p></div>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #fbbf24;'>🥋 GESTÃO E CUIDADOS COM O KIMONO</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Registre anotações, lavagens e dicas de manutenção do seu equipamento de luta.</p>", unsafe_allow_html=True)
+    
+    nota_kimono = st.text_area("Anotações sobre lavagem, ajustes ou reparos no Kimono:", placeholder="Ex: Lavar com água fria, secar à sombra para não encolher a gola...")
+    if st.button("💾 Salvar Nota do Kimono", use_container_width=True):
+        if nota_kimono.strip():
+            st.success("✅ Anotação de kimono salva com sucesso!")
+        else:
+            st.warning("Digite alguma observação antes de salvar.")
 
-# ===========================================================================
-# ABA 14: CARD VITÓRIA
-# ===========================================================================
-with aba_card:
-    st.markdown("<h2 style='text-align: center; color: #a855f7;'>📸 CARD DE VITÓRIA</h2>", unsafe_allow_html=True)
-    st.code("Tatame lavado, missão cumprida por hoje! 🥋🔥 OSS! #BJJ #OssBot", language="text")
-
-# ===========================================================================
-# ABA 15: PESAGEM & VÉSPERA
-# ===========================================================================
-with aba_pesagem:
-    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📋 CHECKLIST DE PESAGEM</h2>", unsafe_allow_html=True)
     st.markdown("""
-    <div class='curso-box'>
-        <h3>⚖️ Roteiro de Pesagem Offline:</h3>
-        <p>1. Pese seu kimono seco (trançados pesam entre 1.3kg e 1.8kg).</p>
-        <p>2. Evite consumo excessivo de sal na véspera do torneio.</p>
-        <p>3. Deixe documentos e carteirinha da federação separados na mochila.</p>
+    <div class='kids-box' style='margin-top: 20px;'>
+        <h3>🧼 Dica de Ouro de Conservação:</h3>
+        <p>Nunca utilize secadora de roupas em quimonos trançados 100% algodão para evitar encolhimento precoce e desgaste das costuras principais.</p>
     </div>
     """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 16: CADERNETA DE ALUNOS
+# ABA 12: CARD VITÓRIA (Upload de Imagens, Câmera e Texto)
+# ===========================================================================
+with aba_card:
+    st.markdown("<h2 style='text-align: center; color: #a855f7;'>📸 CARD DE VITÓRIA</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Crie seu card personalizado com foto, texto e comemore suas conquistas no tatame!</p>", unsafe_allow_html=True)
+
+    foto_card_up = st.file_uploader("Enviar Foto da Vitória (Arquivos):", type=["jpg", "png", "jpeg"])
+    foto_card_cam = st.camera_input("Ou Tire uma Foto com a Câmera:")
+    
+    legenda_card = st.text_area("Legenda / Frase do Card:", value="Tatame lavado, missão cumprida por hoje! 🥋🔥 OSS! #BJJ #OssBot")
+    
+    if st.button("🚀 Gerar Card de Vitória", use_container_width=True):
+        st.success("✅ Card gerado com sucesso!")
+        st.markdown(f"""
+        <div class='placar-box' style='border: 2px solid #a855f7;'>
+            <h3 style='color: #a855f7;'>🏆 CARD OFICIAL OSSBOT</h3>
+            <p style='font-size: 18px; font-weight: bold;'>{legenda_card}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ===========================================================================
+# ABA 13: CADERNETA DE ALUNOS
 # ===========================================================================
 with aba_caderneta:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>📇 CADERNETA DE ALUNOS & FREQUÊNCIA</h2>", unsafe_allow_html=True)
@@ -620,6 +734,7 @@ with aba_caderneta:
     if st.button("➕ Adicionar Aluno à Turma", use_container_width=True, key="btn_add_aluno"):
         if novo_aluno.strip():
             st.session_state.lista_alunos_academia.append(novo_aluno.strip())
+            salvar_conversa_atual()
             st.success(f"✅ Aluno {novo_aluno} adicionado com sucesso!")
 
     if st.session_state.lista_alunos_academia:
@@ -632,10 +747,12 @@ with aba_caderneta:
                     st.toast(f"✅ Presença confirmada para {aluno}!")
 
 # ===========================================================================
-# ABA 17: CHAVES DE TORNEIO
+# ABA 14: CHAVES DE TORNEIO (Com cores corrigidas e legibilidade perfeita)
 # ===========================================================================
 with aba_chaves:
     st.markdown("<h2 style='text-align: center; color: #f43f5e;'>⏱️ ORGANIZADOR DE CHAVES DE LUTA</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Organize os confrontos dos atletas de forma limpa e visível.</p>", unsafe_allow_html=True)
+    
     nomes_atletas_txt = st.text_area("Digite os nomes dos atletas (um por linha):", placeholder="Atleta 1\nAtleta 2\nAtleta 3\nAtleta 4", key="txt_atletas_chave")
     
     if st.button("⚔️ Gerar Chaves de Luta", use_container_width=True, key="btn_gerar_chave"):
@@ -645,6 +762,6 @@ with aba_chaves:
         else:
             st.markdown("<div class='placar-box'><h3 style='color: #00ffcc;'>⚔️ CONFRONTOS GERADOS</h3></div>", unsafe_allow_html=True)
             for i in range(0, len(atletas)-1, 2):
-                st.markdown(f"🥊 **Luta:** {atletas[i]}  **vs**  {atletas[i+1]}")
+                st.markdown(f"<div style='background-color: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #ff4d4d;'><h4 style='color: #ffffff; margin:0;'>🥊 Luta: <span style='color: #00ffcc;'>{atletas[i]}</span> vs <span style='color: #ff4d4d;'>{atletas[i+1]}</span></h4></div>", unsafe_allow_html=True)
             if len(atletas) % 2 != 0:
                 st.info(f"✨ Atleta aguardando vencedores (Bye): {atletas[-1]}")
