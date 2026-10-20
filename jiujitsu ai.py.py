@@ -131,53 +131,46 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Configuração de Suporte PWA (App Instalável) + Estilização Dark Mode
+# Estilização CSS e PWA Corrigidos
 st.markdown("""
-    <head>
-        <link rel="manifest" href="data:application/manifest+json;utf8,{\"name\":\"OssBot Jiu-Jitsu App\",\"short_name\":\"OssBot\",\"start_url\":\"/\",\"display\":\"standalone\",\"background_color\":\"#121212\",\"theme_color\":\"#ff4d4d\",\"icons\":[{\"src\":\"https://em-content.zobj.net/source/apple/354/martial-arts-uniform_1f94b.png\",\"sizes\":\"192x192\",\"type\":\"image/png\"}]}">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <meta name="theme-color" content="#ff4d4d">
-    </head>
-    <style>
-    .stApp { background-color: #121212; color: #ffffff; }
-    .main { background-color: #121212; }
-    h1, h2, h3, h4, h5, h6, span, label, div, p { color: #ffffff !important; }
-    
-    div[data-testid="stChatMessage"] p,
-    div[data-testid="stChatMessage"] span,
-    div[data-testid="stChatMessage"] div,
-    div[data-testid="stChatMessage"] li,
-    div[data-testid="stChatMessage"] label,
-    .stMarkdown p,
-    .stMarkdown span,
-    .stMarkdown li {
-        color: #ffffff !important;
-    }
+<style>
+.stApp { background-color: #121212; color: #ffffff; }
+.main { background-color: #121212; }
+h1, h2, h3, h4, h5, h6, span, label, div, p { color: #ffffff !important; }
 
-    div[data-testid="stFileUploader"], div[data-testid="stAudioInput"], div[data-testid="stCameraInput"] {
-        background-color: #2b2b2b !important; border-radius: 10px; padding: 15px; border: 1px solid #444444;
-    }
-    div[data-testid="stChatInput"] {
-        background-color: #f0f0f0 !important; border-radius: 10px; border: 2px solid #ff4d4d !important;
-    }
-    div[data-testid="stChatInput"] textarea {
-        color: #000000 !important; background-color: #f0f0f0 !important; font-weight: bold !important; font-size: 16px !important;
-    }
-    .stButton button {
-        border-radius: 10px; font-weight: bold; background-color: #333333; color: #ff4d4d; border: 1px solid #ff4d4d;
-    }
-    .stButton button:hover { background-color: #555555; color: #ffffff; }
-    .placar-box { background-color: #1e1e1e; border: 2px solid #ff4d4d; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
-    .placar-numero { font-size: 50px; font-weight: bold; color: #00ffcc; }
-    .nutri-box { background-color: #1e293b; border: 2px solid #00ffcc; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-    .camp-box { background-color: #1e1b4b; border: 2px solid #ff4d4d; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-    .curso-box { background-color: #0f172a; border: 2px solid #38bdf8; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-    .kids-box { background-color: #451a03; border: 2px solid #fbbf24; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-    .extra-box { background-color: #064e3b; border: 2px solid #34d399; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-    .pwa-box { background-color: #111827; border: 2px dashed #00ffcc; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
-    </style>
+div[data-testid="stChatMessage"] p,
+div[data-testid="stChatMessage"] span,
+div[data-testid="stChatMessage"] div,
+div[data-testid="stChatMessage"] li,
+div[data-testid="stChatMessage"] label,
+.stMarkdown p,
+.stMarkdown span,
+.stMarkdown li {
+    color: #ffffff !important;
+}
+
+div[data-testid="stFileUploader"], div[data-testid="stAudioInput"], div[data-testid="stCameraInput"] {
+    background-color: #2b2b2b !important; border-radius: 10px; padding: 15px; border: 1px solid #444444;
+}
+div[data-testid="stChatInput"] {
+    background-color: #f0f0f0 !important; border-radius: 10px; border: 2px solid #ff4d4d !important;
+}
+div[data-testid="stChatInput"] textarea {
+    color: #000000 !important; background-color: #f0f0f0 !important; font-weight: bold !important; font-size: 16px !important;
+}
+.stButton button {
+    border-radius: 10px; font-weight: bold; background-color: #333333; color: #ff4d4d; border: 1px solid #ff4d4d;
+}
+.stButton button:hover { background-color: #555555; color: #ffffff; }
+.placar-box { background-color: #1e1e1e; border: 2px solid #ff4d4d; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
+.placar-numero { font-size: 50px; font-weight: bold; color: #00ffcc; }
+.nutri-box { background-color: #1e293b; border: 2px solid #00ffcc; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+.camp-box { background-color: #1e1b4b; border: 2px solid #ff4d4d; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+.curso-box { background-color: #0f172a; border: 2px solid #38bdf8; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+.kids-box { background-color: #451a03; border: 2px solid #fbbf24; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+.extra-box { background-color: #064e3b; border: 2px solid #34d399; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+.pwa-box { background-color: #111827; border: 2px dashed #00ffcc; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
+</style>
 """, unsafe_allow_html=True)
 
 # Botões flutuantes para subir e descer a página
