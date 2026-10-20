@@ -3,28 +3,45 @@ import io
 import json
 import uuid
 import hashlib
+import socket
 import tempfile
 from datetime import datetime
 
 import streamlit as st
 import streamlit.components.v1 as components
 
-# Tenta carregar a API da Groq (IA online)
-try:
-    from groq import Groq
-    tem_groq = True
-except ImportError:
-    tem_groq = False
+# Função para testar se há conexão real com a internet
+def checar_conexao_internet():
+    try:
+        # Tenta conectar a um servidor DNS público rápido (Google)
+        socket.setdefaulttimeout(2)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        return True
+    except Exception:
+        return False
 
-# Tenta carregar a biblioteca de voz gTTS (Text-to-Speech)
-try:
-    from gTTS import gTTS
-    tem_gtts = True
-except ImportError:
-    tem_gtts = False
+tem_internet = checar_conexao_internet()
+
+# Tenta carregar as APIs apenas se houver conexão
+client = None
+tem_gtts = False
+
+if tem_internet:
+    try:
+        from groq import Groq
+        groq_api_key = "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"
+        client = Groq(api_key=groq_api_key)
+    except Exception:
+        client = None
+
+    try:
+        from gTTS import gTTS
+        tem_gtts = True
+    except ImportError:
+        tem_gtts = False
 
 def gerar_audio(texto):
-    if not tem_gtts:
+    if not tem_gtts or not tem_internet:
         return b""
     limpo = (
         texto.replace("*", "")
@@ -181,7 +198,8 @@ st.markdown("""
     .curso-box { background-color: #0f172a; border: 2px solid #38bdf8; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
     .kids-box { background-color: #451a03; border: 2px solid #fbbf24; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
     .extra-box { background-color: #064e3b; border: 2px solid #34d399; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-    .offline-badge { background-color: #d97706; color: #ffffff; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+    .offline-badge { background-color: #d97706; color: #ffffff; padding: 8px 16px; border-radius: 10px; font-weight: bold; font-size: 16px; display: inline-block; }
+    .online-badge { background-color: #16a34a; color: #ffffff; padding: 8px 16px; border-radius: 10px; font-weight: bold; font-size: 16px; display: inline-block; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -316,19 +334,6 @@ if "ultimo_audio_luta" not in st.session_state: st.session_state.ultimo_audio_lu
 if "historico_lutas" not in st.session_state: st.session_state.historico_lutas = []
 if "lista_alunos_academia" not in st.session_state: st.session_state.lista_alunos_academia = []
 
-# Cliente Groq
-groq_api_key = "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"
-client = None
-modo_offline = False
-
-try:
-    if tem_groq:
-        client = Groq(api_key=groq_api_key)
-    else:
-        modo_offline = True
-except Exception:
-    modo_offline = True
-
 MODELO = "openai/gpt-oss-120b"
 
 # Cabeçalho com Fotos
@@ -339,8 +344,12 @@ with col_centro:
     st.markdown("<h1 style='text-align: center; color: #ff4d4d !important;'>🥋 OssBot</h1>", unsafe_allow_html=True)
     st.markdown(f"<h4 style='text-align: center; color: #00ffcc;'>Usuário: {st.session_state.usuario_atual}</h4>", unsafe_allow_html=True)
     st.markdown("<h3 style='text-align: center; color: #aaaaaa;'>O seu Assistente de Jiu-Jitsu</h3>", unsafe_allow_html=True)
-    if modo_offline:
-        st.markdown("<p style='text-align: center;'><span class='offline-badge'>📡 MODO OFFLINE ATIVO</span></p>", unsafe_allow_html=True)
+    
+    # MENSAGEM CLARA DE STATUS DE INTERNET
+    if tem_internet:
+        st.markdown("<p style='text-align: center;'><span class='online-badge'>🟢 Você está com internet! Modo offline desligado.</span></p>", unsafe_allow_html=True)
+    else:
+        st.markdown("<p style='text-align: center;'><span class='offline-badge'>📡 Você está sem internet! Modo offline ligado.</span></p>", unsafe_allow_html=True)
 
 with col_dir:
     st.image("https://images.unsplash.com/photo-1555597673-b21d5c935865?q=80&w=600&auto=format&fit=crop", caption="Faixa Preta — Tradição", use_container_width=True)
@@ -349,7 +358,7 @@ st.divider()
 
 # Abas Principais (Total de 17 Abas)
 aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos, aba_kids, aba_drills, aba_pressao, aba_grad, aba_def, aba_lesao, aba_kimono, aba_card, aba_pesagem, aba_caderneta, aba_chaves = st.tabs([
-    "💬 Chat", 
+    "💬 Chat IA", 
     "🤼 Luta", 
     "📜 Histórico",
     "🥗 Nutrição",
@@ -369,81 +378,69 @@ aba_chat, aba_modo_luta, aba_historico_lutas, aba_nutricao, aba_camp, aba_cursos
 ])
 
 # ===========================================================================
-# ABA 1: CHAT COM IA
+# ABA 1: CHAT COM IA (ÚNICA QUE EXIGE INTERNET)
 # ===========================================================================
 with aba_chat:
-    def gerar_titulo(pergunta, resposta):
-        fallback = (pergunta[:40] + "…") if len(pergunta) > 40 else pergunta
-        if not client: return fallback
-        try:
-            r = client.chat.completions.create(
-                model=MODELO,
-                messages=[
-                    {"role": "system", "content": "Crie um título curto de jiu-jitsu, em português, max 6 palavras."},
-                    {"role": "user", "content": f"Pergunta: {pergunta}\n\nResposta: {resposta[:500]}"},
-                ],
-                temperature=0.3, max_tokens=300,
-            )
-            titulo = (r.choices[0].message.content or "").strip().split("\n")[0].strip('"\'*# ').rstrip(".")
-            return titulo[:60] if titulo else fallback
-        except Exception:
-            return fallback
+    if not tem_internet:
+        st.warning("⚠️ **Você está sem internet no momento!** A aba de Chat com IA precisa de conexão para responder. Todas as outras 16 abas do OssBot (Placar, Nutrição, Cursos, Regras, Kids, Drills, etc.) continuam funcionando 100% no Modo Offline!")
+    else:
+        st.markdown("### ⚙️ Escolha o Modo de Atendimento")
+        modo_selecionado = st.radio(
+            "Como você quer que o OssBot responda?",
+            ["🥋 Aluno / Competidor", "👶 Professor / Turma Kids"],
+            index=0, key="modo_atendimento"
+        )
 
-    st.markdown("### ⚙️ Escolha o Modo de Atendimento")
-    modo_selecionado = st.radio(
-        "Como você quer que o OssBot responda?",
-        ["🥋 Aluno / Competidor", "👶 Professor / Turma Kids"],
-        index=0, key="modo_atendimento"
-    )
+        system_prompt = "Você é o OssBot, assistente especialista em BJJ focado em atletas e professores. Use termos como OSS, guarda, raspagem."
 
-    system_prompt = "Você é o OssBot, assistente especialista em BJJ focado em atletas e professores. Use termos como OSS, guarda, raspagem."
+        st.divider()
+        st.markdown("### ⚡ Atalhos Inteligentes")
+        atalhos_personalizados = gerar_atalhos_inteligentes(st.session_state.conversas)
+        cols_atalhos = st.columns(len(atalhos_personalizados))
+        for idx, atalho in enumerate(atalhos_personalizados):
+            with cols_atalhos[idx]:
+                if st.button(f"📌 {atalho}", key=f"atalho_{idx}", use_container_width=True):
+                    st.session_state.atalho_clicado = f"Quero dicas sobre: {atalho}"
 
-    st.divider()
-    st.markdown("### ⚡ Atalhos Inteligentes")
-    atalhos_personalizados = gerar_atalhos_inteligentes(st.session_state.conversas)
-    cols_atalhos = st.columns(len(atalhos_personalizados))
-    for idx, atalho in enumerate(atalhos_personalizados):
-        with cols_atalhos[idx]:
-            if st.button(f"📌 {atalho}", key=f"atalho_{idx}", use_container_width=True):
-                st.session_state.atalho_clicado = f"Quero dicas sobre: {atalho}"
+        st.divider()
+        for i, mensagem in enumerate(st.session_state.historico):
+            with st.chat_message(mensagem["role"]):
+                st.markdown(mensagem["content"])
+                if mensagem["role"] == "assistant" and st.button("🔊 Ouvir", key=f"ouvir_{i}"):
+                    ab = gerar_audio(mensagem["content"])
+                    if ab: st.audio(ab, format="audio/mp3")
 
-    st.divider()
-    for i, mensagem in enumerate(st.session_state.historico):
-        with st.chat_message(mensagem["role"]):
-            st.markdown(mensagem["content"])
-            if mensagem["role"] == "assistant" and st.button("🔊 Ouvir", key=f"ouvir_{i}"):
-                ab = gerar_audio(mensagem["content"])
-                if ab: st.audio(ab, format="audio/mp3")
+        texto_para_enviar = None
+        pergunta_texto = st.chat_input("Digite sua dúvida...")
 
-    texto_para_enviar = None
-    pergunta_texto = st.chat_input("Digite sua dúvida...")
+        if st.session_state.atalho_clicado:
+            texto_para_enviar = st.session_state.atalho_clicado
+            st.session_state.atalho_clicado = None
 
-    if st.session_state.atalho_clicado:
-        texto_para_enviar = st.session_state.atalho_clicado
-        st.session_state.atalho_clicado = None
+        if pergunta_texto:
+            texto_para_enviar = pergunta_texto
+            st.session_state.historico.append({"role": "user", "content": pergunta_texto})
+            salvar_conversa_atual()
 
-    if pergunta_texto:
-        texto_para_enviar = pergunta_texto
-        st.session_state.historico.append({"role": "user", "content": pergunta_texto})
-        salvar_conversa_atual()
-
-    if texto_para_enviar and client:
-        with st.chat_message("assistant"):
-            with st.spinner("OssBot pensando... OSS! 🥋"):
-                try:
-                    res = client.chat.completions.create(model=MODELO, messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": texto_para_enviar}], temperature=0.7)
-                    resp = res.choices[0].message.content
-                    st.markdown(resp)
-                    st.session_state.historico.append({"role": "assistant", "content": resp})
-                    salvar_conversa_atual()
-                except Exception:
-                    st.warning("Erro de conexão com a IA.")
+        if texto_para_enviar and client:
+            with st.chat_message("assistant"):
+                with st.spinner("OssBot pensando... OSS! 🥋"):
+                    try:
+                        res = client.chat.completions.create(model=MODELO, messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": texto_para_enviar}], temperature=0.7)
+                        resp = res.choices[0].message.content
+                        st.markdown(resp)
+                        st.session_state.historico.append({"role": "assistant", "content": resp})
+                        salvar_conversa_atual()
+                    except Exception:
+                        st.warning("Erro de conexão com os servidores da IA.")
 
 # ===========================================================================
-# ABA 2: MODO LUTA
+# ABA 2: MODO LUTA (OFFLINE ATIVO)
 # ===========================================================================
 with aba_modo_luta:
-    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR & CRONÔMETRO</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>⏱️ PLACAR & CRONÔMETRO DE LUTA</h2>", unsafe_allow_html=True)
+    if not tem_internet: st.caption("📡 Modo Offline Ativo: O placar e cronômetro funcionam normalmente!")
+    
     col_l1, col_l2 = st.columns(2)
     with col_l1: nome_atleta_a = st.text_input("🔵 Atleta 1:", value="Atleta Azul", key="nome_a")
     with col_l2: nome_atleta_b = st.text_input("⚪ Atleta 2:", value="Atleta Branco", key="nome_b")
@@ -494,10 +491,10 @@ with aba_modo_luta:
         }
         st.session_state.historico_lutas.append(nl)
         salvar_dados_usuario(st.session_state.usuario_atual, {"conversas": st.session_state.conversas, "historico_lutas": st.session_state.historico_lutas})
-        st.success("✅ Luta salva!")
+        st.success("✅ Luta salva na memória!")
 
 # ===========================================================================
-# ABA 3: HISTÓRICO DE LUTAS
+# ABA 3: HISTÓRICO DE LUTAS (OFFLINE ATIVO)
 # ===========================================================================
 with aba_historico_lutas:
     st.markdown("### 📜 Lutas Registradas")
@@ -509,44 +506,54 @@ with aba_historico_lutas:
                 st.write(f"🔵 **{luta['atleta_a']}**: {luta['pts_a']} Pts | ⚪ **{luta['atleta_b']}**: {luta['pts_b']} Pts")
 
 # ===========================================================================
-# ABA 4: NUTRIÇÃO & PESO
+# ABA 4: NUTRIÇÃO & PESO (OFFLINE ATIVO)
 # ===========================================================================
 with aba_nutricao:
     st.markdown("<h2 style='text-align: center; color: #00ffcc;'>🥗 NUTRIÇÃO & HIDRATAÇÃO</h2>", unsafe_allow_html=True)
     peso = st.number_input("Peso atual (kg):", 30.0, 150.0, 65.0, 0.5, key="nutri_peso")
     agua = (peso * 35) / 1000
-    st.markdown(f"<div class='nutri-box'><h3>🥤 Água Ideal Diária:</h3><h2>{agua:.2f} Litros</h2></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='nutri-box'><h3>🥤 Água Ideal Diária:</h3><h2>{agua:.2f} Litros</h2><p>• Dica Offline: Beba 500ml 1h antes do treino e coma carboidratos leves para energia sem refluxo.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 5: CAMPEONATO
+# ABA 5: CAMPEONATO (OFFLINE ATIVO)
 # ===========================================================================
 with aba_camp:
     st.markdown("<h2 style='text-align: center; color: #ff4d4d;'>🏆 ESTRATÉGIA DE CAMPEONATO</h2>", unsafe_allow_html=True)
     st.markdown("""
     <div class='camp-box'>
         <h3>🥇 Guia Tático Oficial</h3>
-        <p>1. Imponha pegadas firmes nos primeiros 30 segundos.</p>
-        <p>2. Busque os primeiros 2 pontos com segurança.</p>
-        <p>3. Administre o relógio na reta final.</p>
+        <p>1. <b>Início:</b> Imponha pegadas firmes nos primeiros 30 segundos sem hesitar.</p>
+        <p>2. <b>Pontuação:</b> Busque os primeiros 2 pontos com segurança para colocar pressão no adversário.</p>
+        <p>3. <b>Reta Final:</b> Administre a postura e evite trocas arriscadas se estiver à frente no placar.</p>
     </div>
     """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 6: CURSOS
+# ABA 6: CURSOS (OFFLINE ATIVO)
 # ===========================================================================
 with aba_cursos:
-    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 REGRAS BJJ</h2>", unsafe_allow_html=True)
-    st.markdown("* **2 Pontos:** Queda, Raspagem, Joelho na Barriga.\n* **3 Pontos:** Passagem de Guarda.\n* **4 Pontos:** Montada e Costas.")
+    st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📚 MANUAL DE REGRAS BJJ</h2>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class='curso-box'>
+        <h3>📜 Tabela Oficial de Pontos CBJJ / IBJJF:</h3>
+        <ul>
+            <li><b>2 PONTOS:</b> Queda, Raspagem e Joelho na Barriga.</li>
+            <li><b>3 PONTOS:</b> Passagem de Guarda.</li>
+            <li><b>4 PONTOS:</b> Montada, Montada pelas Costas e Pegada de Costas com dois ganchos.</li>
+            <li><b>VANTAGENS:</b> Quase-queda, quase-raspagem ou tentativa real de finalização com defesa ativa.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 7: KIDS
+# ABA 7: KIDS (OFFLINE ATIVO)
 # ===========================================================================
 with aba_kids:
-    st.markdown("<h2 style='text-align: center; color: #fbbf24;'>👶 AULAS KIDS</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='kids-box'><h3>🧸 Dinâmica: Pega-Pega do Guardeiro</h3><p>Desenvolve agilidade e base para as crianças.</p></div>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #fbbf24;'>👶 AULAS & DINÂMICAS KIDS</h2>", unsafe_allow_html=True)
+    st.markdown("<div class='kids-box'><h3>🧸 Dinâmica: Pega-Pega do Guardeiro</h3><p>As crianças treinam reposição de guarda e agilidade tentando passar a guarda do professor sem usar força bruta.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 8: DRILLS
+# ABA 8: DRILLS (OFFLINE ATIVO)
 # ===========================================================================
 with aba_drills:
     st.markdown("<h2 style='text-align: center; color: #34d399;'>⏱️ DRILLS & HIIT</h2>", unsafe_allow_html=True)
@@ -554,73 +561,66 @@ with aba_drills:
         st.success("✅ Treino de tiros iniciado!")
 
 # ===========================================================================
-# ABA 9: PRESSÃO
+# ABA 9: PRESSÃO (OFFLINE ATIVO)
 # ===========================================================================
 with aba_pressao:
     st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🧠 PRESSÃO DE LUTA</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='camp-box'><h4>Faltando 1 minuto e perdendo:</h4><p>Estoure pegadas e force o ataque imediato.</p></div>", unsafe_allow_html=True)
+    st.markdown("<div class='camp-box'><h4>💡 Faltando 1 minuto e perdendo por 2 a 0:</h4><p>Estoure pegadas imediatamente e force o ataque de raspagem/queda sem aceitar amarração.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 10: GRADUAÇÃO
+# ABA 10: GRADUAÇÃO (OFFLINE ATIVO)
 # ===========================================================================
 with aba_grad:
     st.markdown("<h2 style='text-align: center; color: #34d399;'>🥇 GRADUAÇÃO</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='extra-box'><h3>Foco no próximo grau:</h3><p>Consistência, técnica afiada e auxílio aos colegas.</p></div>", unsafe_allow_html=True)
+    st.markdown("<div class='extra-box'><h3>Foco no próximo grau:</h3><p>Consistência, técnica afiada, respeito no tatame e auxílio aos colegas.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 11: DEFESA PESSOAL
+# ABA 11: DEFESA PESSOAL (OFFLINE ATIVO)
 # ===========================================================================
 with aba_def:
     st.markdown("<h2 style='text-align: center; color: #38bdf8;'>🛡️ DEFESA PESSOAL</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='curso-box'><h3>Anti-Bullying & Gravata:</h3><p>Mantenha base firme, proteja o pescoço e busque ajuda imediata.</p></div>", unsafe_allow_html=True)
+    st.markdown("<div class='curso-box'><h3>Anti-Bullying & Gravata:</h3><p>Mantenha base firme, proteja o pescoço e busque ajuda imediata sem promover agressão.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 12: LESÕES
+# ABA 12: LESÕES (OFFLINE ATIVO)
 # ===========================================================================
 with aba_lesao:
     st.markdown("<h2 style='text-align: center; color: #f43f5e;'>🩹 LESÕES</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='placar-box'><h3>Cuidados:</h3><p>Use fita nos dedos para suporte e aplique gelo por 20 minutos pós-treino.</p></div>", unsafe_allow_html=True)
+    st.markdown("<div class='placar-box'><h3>Cuidados:</h3><p>Use fita nos dedos para suporte de pegada e aplique gelo por 20 minutos pós-treino.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 13: KIMONO
+# ABA 13: KIMONO (OFFLINE ATIVO)
 # ===========================================================================
 with aba_kimono:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>🥋 KIMONOS</h2>", unsafe_allow_html=True)
     st.markdown("<div class='kids-box'><h3>O Nó da Faixa:</h3><p>Cruze por trás, passe por dentro de todas as voltas e dê o nó simétrico.</p></div>", unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 14: CARD VITÓRIA
+# ABA 14: CARD VITÓRIA (OFFLINE ATIVO)
 # ===========================================================================
 with aba_card:
     st.markdown("<h2 style='text-align: center; color: #a855f7;'>📸 CARD VITÓRIA</h2>", unsafe_allow_html=True)
     st.code("Tatame lavado, missão cumprida por hoje! 🥋🔥 OSS! #BJJ #OssBot", language="text")
 
 # ===========================================================================
-# ABA 15: PESAGEM & VÉSPERA (NOVA 1)
+# ABA 15: PESAGEM & VÉSPERA (OFFLINE ATIVO)
 # ===========================================================================
 with aba_pesagem:
     st.markdown("<h2 style='text-align: center; color: #38bdf8;'>📋 CHECKLIST DE PESAGEM & VÉSPERA</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Não perca nenhuma luta por vacilo na balança!</p>", unsafe_allow_html=True)
-    
     st.markdown("""
     <div class='curso-box'>
-        <h3>⚖️ Roteiro Obrigatório para o Dia Anterior:</h3>
-        <ul>
-            <li><b>Pesar o Kimono seco:</b> Lembre-se que o trançado pesa entre 1.3kg e 1.8kg.</li>
-            <li><b>Corte de Sódio:</b> Evite alimentos muito salgados na véspera para não reter líquido.</li>
-            <li><b>Hidratação inteligente:</b> Beba água fracionada ao longo do dia e evite exagerar na refeição pesada à noite.</li>
-            <li><b>Documento e Inscrição:</b> Deixe a carteirinha da federação e documento com foto separados na mochila.</li>
-        </ul>
+        <h3>⚖️ Roteiro de Pesagem Offline:</h3>
+        <p>1. Pese seu kimono seco (trançados pesam entre 1.3kg e 1.8kg).</p>
+        <p>2. Evite exagero de sal na véspera do torneio.</p>
+        <p>3. Deixe documentos e carteirinha separados na mochila.</p>
     </div>
     """, unsafe_allow_html=True)
 
 # ===========================================================================
-# ABA 16: CADERNETA DE ALUNOS (NOVA 2)
+# ABA 16: CADERNETA DE ALUNOS (OFFLINE ATIVO)
 # ===========================================================================
 with aba_caderneta:
     st.markdown("<h2 style='text-align: center; color: #fbbf24;'>📇 CADERNETA DE ALUNOS & FREQUÊNCIA</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Controle rápido de presença para professores e monitores.</p>", unsafe_allow_html=True)
-    
     novo_aluno = st.text_input("Nome do Aluno:", placeholder="Ex: Lucas Gabriel", key="input_novo_aluno")
     if st.button("➕ Adicionar Aluno", use_container_width=True, key="btn_add_aluno"):
         if novo_aluno.strip():
@@ -631,34 +631,23 @@ with aba_caderneta:
         st.markdown("### 📋 Lista de Alunos Atuais:")
         for idx, aluno in enumerate(st.session_state.lista_alunos_academia):
             col_al1, col_al2 = st.columns([3, 1])
-            with col_al1:
-                st.write(f"🥋 {aluno}")
+            with col_al1: st.write(f"🥋 {aluno}")
             with col_al2:
                 if st.button("Presença ✔️", key=f"pres_{idx}"):
                     st.toast(f"✅ Presença confirmada para {aluno}!")
-    else:
-        st.info("Nenhum aluno cadastrado ainda na caderneta.")
 
 # ===========================================================================
-# ABA 17: CHAVES DE TORNEIO (NOVA 3)
+# ABA 17: CHAVES DE TORNEIO (OFFLINE ATIVO)
 # ===========================================================================
 with aba_chaves:
-    st.markdown("<h2 style='text-align: center; color: #f43f5e;'>⏱️ ORGANIZADOR DE CHAVES (TORNEIO INTERNO)</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Monte chaves rápidas para campeonatos internos da academia.</p>", unsafe_allow_html=True)
-    
+    st.markdown("<h2 style='text-align: center; color: #f43f5e;'>⏱️ ORGANIZADOR DE CHAVES</h2>", unsafe_allow_html=True)
     nomes_atletas_txt = st.text_area("Digite os nomes dos atletas (um por linha):", placeholder="Atleta 1\nAtleta 2\nAtleta 3\nAtleta 4", key="txt_atletas_chave")
     
-    if st.button("gerar Chaves de Luta", use_container_width=True, key="btn_gerar_chave"):
+    if st.button("Gerar Chaves de Luta", use_container_width=True, key="btn_gerar_chave"):
         atletas = [a.strip() for a in nomes_atletas_txt.split("\n") if a.strip()]
         if len(atletas) < 2:
-            st.warning("Digite pelo menos 2 atletas para gerar as chaves!")
+            st.warning("Digite pelo menos 2 atletas!")
         else:
-            st.markdown("""
-            <div class='placar-box'>
-                <h3 style='color: #00ffcc;'>⚔️ TABELA DE CONFRONTOS GERADA</h3>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("<div class='placar-box'><h3 style='color: #00ffcc;'>⚔️ TABELA DE CONFRONTOS</h3></div>", unsafe_allow_html=True)
             for i in range(0, len(atletas)-1, 2):
                 st.markdown(f"🥊 **Luta:** {atletas[i]}  **vs**  {atletas[i+1]}")
-            if len(atletas) % 2 != 0:
-                st.info(f"✨ Atleta aguardando próxima fase (Bye): {atletas[-1]}")
